@@ -23,6 +23,9 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.24.0",
+    "cookie-cutter": "^0.2.0",
+    "cookies": "^0.8.0",
     "mobx": "^6.3.7",
     "mobx-react-lite": "^3.2.2",
     "next": "latest",

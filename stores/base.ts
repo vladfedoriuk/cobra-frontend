@@ -1,7 +1,7 @@
 import { RootStore } from '@stores/root'
 
-export class BaseStore<T> {
-  readonly rootStore: RootStore = null
+export default abstract class BaseStore<T> {
+  private readonly rootStore: RootStore = null
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore

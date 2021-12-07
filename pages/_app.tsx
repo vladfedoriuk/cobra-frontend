@@ -22,7 +22,7 @@ class MyApp extends App<MyAppProps> {
     }
     return (
       <MobXStoresProvider initialStoresData={hydrationData}>
-        <Component />
+        <Component {...pageProps} />
       </MobXStoresProvider>
     )
   }

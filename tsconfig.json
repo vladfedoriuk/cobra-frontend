@@ -21,7 +21,8 @@
       "@stores/*": ["stores/*"],
       "@typings/*": ["typings/*"],
       "@hooks/*": ["hooks/*"],
-      "@providers/*": ["providers/*"]
+      "@providers/*": ["providers/*"],
+      "@api/*": ["api/*"]
     },
     "typeRoots": ["./node_modules/@types", "typings"]
   },
