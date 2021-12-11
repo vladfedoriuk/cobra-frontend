@@ -3,6 +3,7 @@ import useMobXStores from '@hooks/stores'
 import Router from 'next/router'
 import { GetServerSideProps } from 'next'
 import UserApi from '@api/user'
+import Button from '@mui/material/Button'
 
 const LoginPage: React.FC = (): React.ReactElement => {
   const [username, setUsername] = useState<string>()
@@ -20,6 +21,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
       <input type="text" onChange={(e) => setUsername(e.target.value)} />
       <input type="password" onChange={(e) => setPassword(e.target.value)} />
       <input type="submit"></input>
+      <Button variant="contained">Contained</Button>
     </form>
   )
 }
