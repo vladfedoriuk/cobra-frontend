@@ -1,30 +1,14 @@
-import useMobXStores from '@hooks/stores'
-import { UserStore } from '@stores/user'
 import { observer } from 'mobx-react-lite'
 import Head from 'next/head'
 import Image from 'next/image'
 
 export const Home = (): JSX.Element => {
-  const { user: userStore } = useMobXStores()
   return (
     <div className="container">
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <input
-        type="text"
-        value={userStore?.user?.username}
-        onChange={(e) => {
-          userStore.setUser({
-            username: e.target.value,
-            firstName: '',
-            lastName: '',
-            email: '',
-          })
-        }}
-      />
-      <p>{(userStore as UserStore)?.user?.username}</p>
       <main>
         <h1 className="title">
           Welcome to <a href="https://nextjs.org">Next.js!</a>
