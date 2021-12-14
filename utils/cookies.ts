@@ -1,4 +1,3 @@
-import { NextPageContext } from 'next'
 import cookieCutter from 'cookie-cutter'
 import Cookies from 'cookies'
 
@@ -22,7 +21,7 @@ export const getCookie = ({
         'The context must be provided when getting cookies on the server side'
       )
     }
-    const { req, res } = ctx as NextPageContext
+    const { req, res } = ctx
     const cookies = new Cookies(req, res)
     return cookies.get(cookieName)
   }
@@ -40,7 +39,7 @@ export const setCookie = ({
         'The context must be provided when setting cookies on the server side'
       )
     }
-    const { req, res } = ctx as NextPageContext
+    const { req, res } = ctx
     const cookies = new Cookies(req, res)
     cookies.set(cookieName, cookieValue, {
       httpOnly: true, // true by default
@@ -57,7 +56,7 @@ export const deleteCookie = ({ cookieName, ctx }: DeleteCookieParams): void => {
         'The context must be provided when deleting cookies on the server side'
       )
     }
-    const { req, res } = ctx as NextPageContext
+    const { req, res } = ctx
     const cookies = new Cookies(req, res)
     cookies.set(cookieName)
     return

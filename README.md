@@ -35,3 +35,4 @@ Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&ut
 - A nice [tutorial](https://blog.jarrodwatts.com/nextjs-eslint-prettier-husky) on VSCODE configuration
 - How to use [cookies](https://maxschmitt.me/posts/next-js-cookies/) in Next.js
 - A Material-UI setup [example](https://github.com/mui-org/material-ui/tree/master/examples/nextjs-with-typescript)
+- A theme palette was generated with [coolors](https://coolors.co/5bc0eb-fde74c-9bc53d-c3423f-404e4d)

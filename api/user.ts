@@ -4,6 +4,8 @@ import {
   LoginResponseData,
   RefreshTokenRequestData,
   RefreshTokenResponseData,
+  RegisterRequestData,
+  RegisterResponseData,
 } from '@typings/userApi'
 import {
   deleteCookie,
@@ -18,12 +20,21 @@ import { AxiosResponse } from 'axios'
 import { GetServerSidePropsContext, NextPageContext } from 'next'
 
 export default class UserApi extends BaseApi {
-  async login(
+  login(
     loginData: LoginRequestData
   ): Promise<AxiosResponse<LoginResponseData>> {
-    return await this.post<LoginResponseData, LoginRequestData>(
+    return this.post<LoginResponseData, LoginRequestData>(
       'auth/jwt/create/',
       loginData
+    )
+  }
+
+  register(
+    registerData: RegisterRequestData
+  ): Promise<AxiosResponse<RegisterResponseData>> {
+    return this.post<RegisterResponseData, RegisterRequestData>(
+      'auth/register/',
+      registerData
     )
   }
 
