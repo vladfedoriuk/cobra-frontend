@@ -1,11 +1,18 @@
-import { InitialStoresData, Stores } from '@typings/rootStore'
-import { UserStore } from '@stores/user'
+import {
+  InitialStoresData,
+  RootStoreMapKeys,
+  RootStoreMapValues,
+  Stores,
+} from '@typings/rootStore'
+import UserStore from '@stores/user'
+import SnackBarStore from '@stores/snackbar'
 
-const StoreClassesMap = new Map([['user', UserStore]])
+const StoreClassesMap = new Map<RootStoreMapKeys, RootStoreMapValues>([
+  ['user', UserStore],
+  ['snackbars', SnackBarStore],
+])
 
 export class RootStore {
-  readonly user: UserStore
-
   constructor() {
     StoreClassesMap.forEach(
       (StoreClass, storeName) => (this[storeName] = new StoreClass(this))
@@ -32,5 +39,6 @@ export const fetchInitialStoresData = async (): Promise<InitialStoresData> => {
   // You can do anything to fetch initial store state
   return {
     user: null,
+    snackbars: null,
   }
 }

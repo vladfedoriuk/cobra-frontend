@@ -18,11 +18,11 @@ import {
 } from '@utils/cookies'
 import axios, { AxiosResponse } from 'axios'
 
-export class UserStore extends BaseStore<UserType> {
+export default class UserStore extends BaseStore<UserType> {
   user: UserType = {} as UserType
   api: UserApi = null
 
-  constructor(rootStore: RootStore) {
+  constructor(rootStore: Readonly<RootStore>) {
     super(rootStore)
     this.api = new UserApi()
     makeObservable(this, {
@@ -88,10 +88,8 @@ export class UserStore extends BaseStore<UserType> {
       })
       .catch(<ErrorType extends Error>(error: ErrorType) => {
         if (axios.isAxiosError(error)) {
-          if (error?.response?.data) {
-            if (onFailure !== null) {
-              onFailure(error.response.data)
-            }
+          if (onFailure !== null) {
+            onFailure(error.response.data)
           }
         }
         // eslint-disable-next-line no-console

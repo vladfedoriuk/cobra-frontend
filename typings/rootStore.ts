@@ -1,10 +1,16 @@
-import { UserStore } from '@stores/user'
+import SnackBarStore from '@stores/snackbar'
+import UserStore from '@stores/user'
 import { User as UserType } from '@typings/userStore'
 
-export type InitialStoresData = {
-  user: UserType | null
-}
+export type RootStoreMapKeys = 'user' | 'snackbars'
+export type RootStoreMapValues = typeof UserStore | typeof SnackBarStore
 
-export type Stores = {
+export type InitialStoresData = Partial<{
+  user: UserType | null
+  snackbars: Record<string, unknown> | null
+}>
+
+export interface Stores {
   user: UserStore
+  snackbars: SnackBarStore
 }

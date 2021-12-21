@@ -9,6 +9,7 @@ import { CacheProvider } from '@emotion/react'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@styles/theme'
 import CssBaseline from '@mui/material/CssBaseline'
+import { SnackBarProvider } from '@providers/snackbar'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -41,7 +42,9 @@ class MyApp extends App<MyAppProps> {
         <MobXStoresProvider initialStoresData={hydrationData}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Component {...pageProps} />
+            <SnackBarProvider>
+              <Component {...pageProps} />
+            </SnackBarProvider>
           </ThemeProvider>
         </MobXStoresProvider>
       </CacheProvider>

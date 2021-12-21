@@ -1,13 +1,13 @@
 import { RootStore } from '@stores/root'
 
-export default abstract class BaseStore<T> {
-  private readonly rootStore: RootStore = null
+export default abstract class BaseStore<T extends Record<string, unknown>> {
+  private readonly rootStore: Readonly<RootStore> = null
 
-  constructor(rootStore: RootStore) {
+  constructor(rootStore: Readonly<RootStore>) {
     this.rootStore = rootStore
   }
 
-  hydrate(hydrateData: T): void {
+  hydrate(hydrateData: NonNullable<T>): void {
     for (const [k, v] of Object.entries(hydrateData)) {
       this[k] = v
     }

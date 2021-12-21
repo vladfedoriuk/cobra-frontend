@@ -16,6 +16,7 @@ import Link from '@mui/material/Link'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginErrorsData, LoginRequestData } from '@typings/userApi'
+import { snackbar } from '@typings/snackbarStore'
 
 const schema = yup
   .object({
@@ -33,7 +34,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
   } = useForm<LoginRequestData>({
     resolver: yupResolver(schema),
   })
-  const { user: userStore } = useMobXStores()
+  const { user: userStore, snackbars: snackbarStore } = useMobXStores()
   const onSubmit = async (data: LoginRequestData) => {
     await userStore?.login(
       data,
@@ -58,6 +59,11 @@ const LoginPage: React.FC = (): React.ReactElement => {
             }
           }
         })
+        if ('detail' in errorsData) {
+          if (typeof errorsData.detail === 'string') {
+            snackbarStore.push(snackbar(errorsData.detail, 'error'))
+          }
+        }
       }
     )
   }
@@ -65,7 +71,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
     <Container maxWidth="sm">
       <Box
         sx={{
-          mt: (theme) => theme.spacing(8),
+          mt: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -73,8 +79,8 @@ const LoginPage: React.FC = (): React.ReactElement => {
       >
         <Avatar
           sx={{
-            backgroundColor: (theme) => theme.palette.primary.main,
-            m: (theme) => theme.spacing(1),
+            backgroundColor: 'primary.main',
+            m: 1,
           }}
         >
           <LockOutlinedIcon />
@@ -82,11 +88,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box
-          component="form"
-          sx={{ mt: (theme) => theme.spacing(1) }}
-          noValidate
-        >
+        <Box component="form" sx={{ mt: 1 }} noValidate>
           <Controller
             name="username"
             control={control}
@@ -103,7 +105,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
                 autoComplete="username"
                 autoFocus
                 onChange={onChange}
-                value={value}
+                value={value ?? ''}
               />
             )}
           />
@@ -123,7 +125,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
                 autoComplete="current-password"
                 type="password"
                 onChange={onChange}
-                value={value}
+                value={value ?? ''}
               />
             )}
           />
@@ -142,7 +144,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/register" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

@@ -32,6 +32,7 @@ yarn create next-app --example with-typescript-eslint-jest with-typescript-eslin
 
 Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
 
+- A setup [template](https://github.com/vercel/next.js/tree/master/examples/with-typescript-eslint-jest)
 - A nice [tutorial](https://blog.jarrodwatts.com/nextjs-eslint-prettier-husky) on VSCODE configuration
 - How to use [cookies](https://maxschmitt.me/posts/next-js-cookies/) in Next.js
 - A Material-UI setup [example](https://github.com/mui-org/material-ui/tree/master/examples/nextjs-with-typescript)

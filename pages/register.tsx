@@ -87,7 +87,7 @@ const Register: React.FC = (): React.ReactElement => {
       >
         <Avatar
           sx={{
-            bgcolor: (theme) => theme.palette.success.main,
+            bgcolor: 'success.main',
             m: 1,
           }}
         >
@@ -115,7 +115,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoFocus
                     color="success"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />
@@ -137,7 +137,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoFocus
                     color="success"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />
@@ -158,7 +158,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoComplete="username"
                     color="success"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />
@@ -179,7 +179,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoComplete="email"
                     color="success"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />
@@ -202,7 +202,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoFocus
                     autoComplete="new-password"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />
@@ -225,7 +225,7 @@ const Register: React.FC = (): React.ReactElement => {
                     autoFocus
                     autoComplete="new-password"
                     onChange={onChange}
-                    value={value}
+                    value={value ?? ''}
                   />
                 )}
               />

@@ -24,7 +24,8 @@
       "@hooks/*": ["hooks/*"],
       "@providers/*": ["providers/*"],
       "@api/*": ["api/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@components/*": ["components/*"]
     },
     "typeRoots": ["./node_modules/@types", "typings"]
   },
