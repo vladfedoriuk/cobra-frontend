@@ -8,9 +8,11 @@ export type LoginResponseData = {
   refresh: string
 }
 
-type GenericErrorsData = {
-  [k: string]: string | string[]
-}
+type GenericErrorsData =
+  | {
+      [k: string]: string | string[]
+    }
+  | string[]
 
 export type RegisterData = {
   first_name: string
@@ -36,3 +38,12 @@ export type RefreshTokenRequestData = {
 export type RefreshTokenResponseData = {
   access: string
 }
+
+export type ActivateRequestData = {
+  uid: string
+  token: string
+}
+
+export type ActivateResponseData = Record<string, unknown>
+
+export type ActivateErrorsData = GenericErrorsData

@@ -87,7 +87,7 @@ const Register: React.FC = (): React.ReactElement => {
       >
         <Avatar
           sx={{
-            bgcolor: 'success.main',
+            bgcolor: 'primary.main',
             m: 1,
           }}
         >
@@ -113,7 +113,6 @@ const Register: React.FC = (): React.ReactElement => {
                     id="first_name"
                     label="First Name"
                     autoFocus
-                    color="success"
                     onChange={onChange}
                     value={value ?? ''}
                   />
@@ -135,7 +134,6 @@ const Register: React.FC = (): React.ReactElement => {
                     id="last_name"
                     label="Last Name"
                     autoFocus
-                    color="success"
                     onChange={onChange}
                     value={value ?? ''}
                   />
@@ -156,7 +154,6 @@ const Register: React.FC = (): React.ReactElement => {
                     label="Username"
                     name="username"
                     autoComplete="username"
-                    color="success"
                     onChange={onChange}
                     value={value ?? ''}
                   />
@@ -177,7 +174,6 @@ const Register: React.FC = (): React.ReactElement => {
                     label="Email Address"
                     name="email"
                     autoComplete="email"
-                    color="success"
                     onChange={onChange}
                     value={value ?? ''}
                   />
@@ -198,7 +194,6 @@ const Register: React.FC = (): React.ReactElement => {
                     label="Password"
                     type="password"
                     id="password"
-                    color="success"
                     autoFocus
                     autoComplete="new-password"
                     onChange={onChange}
@@ -221,7 +216,6 @@ const Register: React.FC = (): React.ReactElement => {
                     label="Repeat password"
                     type="password"
                     id="re_password"
-                    color="success"
                     autoFocus
                     autoComplete="new-password"
                     onChange={onChange}
@@ -233,7 +227,6 @@ const Register: React.FC = (): React.ReactElement => {
           </Grid>
           <Button
             fullWidth
-            color="success"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
             onClick={handleSubmit(onSubmit)}
@@ -242,11 +235,7 @@ const Register: React.FC = (): React.ReactElement => {
           </Button>
           <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
             <Grid item>
-              <Link
-                href="/login"
-                variant="body2"
-                sx={{ color: 'success.main' }}
-              >
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>

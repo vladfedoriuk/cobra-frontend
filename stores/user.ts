@@ -10,6 +10,9 @@ import {
   RegisterRequestData,
   RegisterResponseData,
   RegisterErrorsData,
+  ActivateRequestData,
+  ActivateResponseData,
+  ActivateErrorsData,
 } from '@typings/userApi'
 import {
   setCookie,
@@ -29,6 +32,31 @@ export default class UserStore extends BaseStore<UserType> {
       user: observable,
       register: action.bound,
     })
+  }
+
+  async activate(
+    activationData: ActivateRequestData,
+    onSuccess: (data: ActivateResponseData) => void = null,
+    onFailure: (data: ActivateErrorsData) => void = null
+  ): Promise<ActivateResponseData | void> {
+    return await this.api
+      .activate(activationData)
+      .then((response: AxiosResponse<ActivateResponseData>) => {
+        if (onSuccess !== null) {
+          onSuccess(response.data)
+        }
+        return response.data
+      })
+      .catch(<ErrorType extends Error>(error: ErrorType) => {
+        if (axios.isAxiosError(error) && onFailure !== null) {
+          onFailure(error.response?.data)
+        }
+        // eslint-disable-next-line no-console
+        console.log(
+          `Error has occured in UserStore.activate(): ${String(error)}`
+        )
+        // TODO: Add handling the Error case (maybe snackbar store)
+      })
   }
 
   async register(
@@ -51,10 +79,8 @@ export default class UserStore extends BaseStore<UserType> {
         return response.data
       })
       .catch(<ErrorType extends Error>(error: ErrorType) => {
-        if (axios.isAxiosError(error)) {
-          if (onFailure !== null) {
-            onFailure(error.response.data)
-          }
+        if (axios.isAxiosError(error) && onFailure !== null) {
+          onFailure(error.response?.data)
         }
         // eslint-disable-next-line no-console
         console.log(
@@ -87,10 +113,8 @@ export default class UserStore extends BaseStore<UserType> {
         return response.data
       })
       .catch(<ErrorType extends Error>(error: ErrorType) => {
-        if (axios.isAxiosError(error)) {
-          if (onFailure !== null) {
-            onFailure(error.response.data)
-          }
+        if (axios.isAxiosError(error) && onFailure !== null) {
+          onFailure(error.response?.data)
         }
         // eslint-disable-next-line no-console
         console.log(`Error has occured in UserStore.login(): ${String(error)}`)

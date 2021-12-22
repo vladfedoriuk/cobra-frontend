@@ -1,5 +1,7 @@
 import BaseApi from '@api/base'
 import {
+  ActivateRequestData,
+  ActivateResponseData,
   LoginRequestData,
   LoginResponseData,
   RefreshTokenRequestData,
@@ -57,6 +59,15 @@ export default class UserApi extends BaseApi {
       {
         refresh: refreshToken,
       }
+    )
+  }
+
+  activate(
+    activationData: ActivateRequestData
+  ): Promise<AxiosResponse<ActivateResponseData>> {
+    return this.post<ActivateResponseData, ActivateRequestData>(
+      'auth/activate/',
+      activationData
     )
   }
 
