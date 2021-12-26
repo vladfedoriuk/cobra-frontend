@@ -1,5 +1,5 @@
 import { AxiosResponse, AxiosError } from 'axios'
-import { ActivateResponseData, ActivateErrorsData } from '@api/userApi'
+import { ActivateResponseData, ActivateErrorsData } from '@typings/userApi'
 
 export type ActivationPageProps = {
   status: number

@@ -10,16 +10,13 @@ import {
   RegisterRequestData,
   RegisterResponseData,
   RegisterErrorsData,
-  ActivateRequestData,
   ActivateResponseData,
-  ActivateErrorsData,
+  ResendActivationErrorsData,
+  ResendActivationRequestData,
+  ResendActivationResponseData,
 } from '@typings/userApi'
-import {
-  setCookie,
-  JWT_ACCESS_COOKIE_NAME,
-  JWT_REFRESH_COOKIE_NAME,
-} from '@utils/cookies'
-import axios, { AxiosResponse } from 'axios'
+import { authorizeUser } from '@utils/cookies'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export default class UserStore extends BaseStore<UserType> {
   user: UserType = {} as UserType
@@ -34,91 +31,76 @@ export default class UserStore extends BaseStore<UserType> {
     })
   }
 
-  async activate(
-    activationData: ActivateRequestData,
-    onSuccess: (data: ActivateResponseData) => void = null,
-    onFailure: (data: ActivateErrorsData) => void = null
+  async resendActivation(
+    resendActivationData: ResendActivationRequestData,
+    onSuccess: (data: ResendActivationResponseData) => void = null,
+    onBadResponse: (data: ResendActivationErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<ResendActivationRequestData>
+    ) => void = null
   ): Promise<ActivateResponseData | void> {
-    return await this.api
-      .activate(activationData)
-      .then((response: AxiosResponse<ActivateResponseData>) => {
-        if (onSuccess !== null) {
-          onSuccess(response.data)
-        }
-        return response.data
-      })
-      .catch(<ErrorType extends Error>(error: ErrorType) => {
-        if (axios.isAxiosError(error) && onFailure !== null) {
-          onFailure(error.response?.data)
-        }
-        // eslint-disable-next-line no-console
-        console.log(
-          `Error has occured in UserStore.activate(): ${String(error)}`
-        )
-        // TODO: Add handling the Error case (maybe snackbar store)
-      })
+    return await UserApi.withErrorsHandling(
+      this.api
+        .resendActivation(resendActivationData)
+        .then((response: AxiosResponse<ResendActivationResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
   }
 
   async register(
     registerData: RegisterRequestData,
     onSuccess: (data: RegisterResponseData) => void = null,
-    onFailure: (data: RegisterErrorsData) => void = null
+    onBadResponse: (data: RegisterErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<RegisterRequestData>
+    ) => void = null
   ): Promise<RegisterResponseData | void> {
-    return await this.api
-      .register(registerData)
-      .then((response: AxiosResponse<RegisterResponseData>) => {
-        runInAction(() => {
-          this.user.firstName = registerData.first_name
-          this.user.lastName = registerData.last_name
-          this.user.email = registerData.email
-          this.user.username = registerData.username
-        })
-        if (onSuccess !== null) {
-          onSuccess(response.data)
-        }
-        return response.data
-      })
-      .catch(<ErrorType extends Error>(error: ErrorType) => {
-        if (axios.isAxiosError(error) && onFailure !== null) {
-          onFailure(error.response?.data)
-        }
-        // eslint-disable-next-line no-console
-        console.log(
-          `Error has occured in UserStore.register(): ${String(error)}`
-        )
-        // TODO: Add handling the Error case (maybe snackbar store)
-      })
+    return await UserApi.withErrorsHandling(
+      this.api
+        .register(registerData)
+        .then((response: AxiosResponse<RegisterResponseData>) => {
+          runInAction(() => {
+            this.user.firstName = registerData.first_name
+            this.user.lastName = registerData.last_name
+            this.user.email = registerData.email
+            this.user.username = registerData.username
+          })
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
   }
 
   async login(
     loginData: LoginRequestData,
     onSuccess: (data: LoginResponseData) => void = null,
-    onFailure: (data: LoginErrorsData) => void = null
+    onBadResponse: (data: LoginErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<LoginRequestData>
+    ) => void = null
   ): Promise<LoginResponseData | void> {
-    return await this.api
-      .login(loginData)
-      .then((response: AxiosResponse<LoginResponseData>) => {
-        const { access, refresh } = response.data
-        setCookie({
-          cookieName: JWT_ACCESS_COOKIE_NAME,
-          cookieValue: access,
-        })
-        setCookie({
-          cookieName: JWT_REFRESH_COOKIE_NAME,
-          cookieValue: refresh,
-        })
-        if (onSuccess !== null) {
-          onSuccess(response.data)
-        }
-        return response.data
-      })
-      .catch(<ErrorType extends Error>(error: ErrorType) => {
-        if (axios.isAxiosError(error) && onFailure !== null) {
-          onFailure(error.response?.data)
-        }
-        // eslint-disable-next-line no-console
-        console.log(`Error has occured in UserStore.login(): ${String(error)}`)
-        // TODO: Add handling the Error case (maybe snackbar store)
-      })
+    return await UserApi.withErrorsHandling(
+      this.api
+        .login(loginData)
+        .then((response: AxiosResponse<LoginResponseData>) => {
+          authorizeUser(response.data)
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
   }
 }

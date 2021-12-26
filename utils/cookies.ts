@@ -6,6 +6,10 @@ import {
   GetCookieParams,
   SetCookieParams,
   DeleteCookieParams,
+  AuthorizeUserData,
+  NextContext,
+  AccessTokenData,
+  RefreshTokenData,
 } from '@typings/utils'
 
 export const JWT_ACCESS_COOKIE_NAME = 'JWTAccess'
@@ -62,4 +66,64 @@ export const deleteCookie = ({ cookieName, ctx }: DeleteCookieParams): void => {
     return
   }
   cookieCutter.set(cookieName, '', { expires: new Date(0) })
+}
+
+export const setAccessToken = ({ ctx, access }: AccessTokenData): void => {
+  setCookie({
+    cookieName: JWT_ACCESS_COOKIE_NAME,
+    cookieValue: access,
+    ctx,
+  })
+}
+
+export const setRefreshToken = ({ ctx, refresh }: RefreshTokenData): void => {
+  setCookie({
+    cookieName: JWT_REFRESH_COOKIE_NAME,
+    cookieValue: refresh,
+    ctx,
+  })
+}
+
+export const getAccessToken = ({
+  ctx,
+}: NextContext): string | null | undefined =>
+  getCookie({
+    cookieName: JWT_ACCESS_COOKIE_NAME,
+    ctx,
+  })
+
+export const getRefreshToken = ({
+  ctx,
+}: NextContext): string | null | undefined =>
+  getCookie({
+    cookieName: JWT_REFRESH_COOKIE_NAME,
+    ctx,
+  })
+
+export const deleteAccessToken = ({ ctx }: NextContext): void => {
+  deleteCookie({
+    cookieName: JWT_ACCESS_COOKIE_NAME,
+    ctx,
+  })
+}
+
+export const deleteRefreshToken = ({ ctx }: NextContext): void => {
+  deleteCookie({
+    cookieName: JWT_REFRESH_COOKIE_NAME,
+    ctx,
+  })
+}
+
+export const authorizeUser = ({
+  access,
+  refresh,
+  ctx,
+}: AuthorizeUserData): void => {
+  setAccessToken({ ctx, access })
+  setRefreshToken({ ctx, refresh })
+}
+
+export const unauthorizeUser = ({ ctx }: NextContext): void => {
+  deleteAccessToken({ ctx })
+  deleteRefreshToken({ ctx })
 }

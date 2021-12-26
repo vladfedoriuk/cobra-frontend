@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import getAxiosInstance from '@api/axiosInstanse'
 
 export default abstract class BaseApi {
@@ -38,5 +38,43 @@ export default abstract class BaseApi {
   ): Promise<AxiosResponse<ResponseBodyType>> {
     Object.assign(config, this._commonConfigOptions)
     return getAxiosInstance().patch<ResponseBodyType>(endpoint, data, config)
+  }
+
+  static withErrorsHandling<
+    ResponseBodyType,
+    RequestBodyType,
+    ResponseErrorType
+  >(
+    responseDataPromise: Promise<ResponseBodyType>,
+    onBadResponse: (errorData: ResponseErrorType) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<RequestBodyType>
+    ) => void = null
+  ): Promise<ResponseBodyType | void> {
+    return responseDataPromise.catch(
+      <ErrorType extends Error>(error: ErrorType) => {
+        if (axios.isAxiosError(error)) {
+          /*
+          https://gist.github.com/fgilio/230ccd514e9381fafa51608fcf137253
+          https://www.intricatecloud.io/2020/03/how-to-handle-api-errors-in-your-web-app-using-axios/
+          */
+          if (error.response && onBadResponse !== null) {
+            /*
+             * The request was made and the server responded with a
+             * status code that falls out of the range of 2xx
+             */
+
+            onBadResponse(error.response.data)
+          } else if (error.request && onBadRequest != null) {
+            /*
+             * The request was made but no response was received, `error.request`
+             * is an instance of XMLHttpRequest in the browser and an instance
+             * of http.ClientRequest in Node.js
+             */
+            onBadRequest(error.config)
+          }
+        }
+      }
+    )
   }
 }

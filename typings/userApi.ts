@@ -47,3 +47,11 @@ export type ActivateRequestData = {
 export type ActivateResponseData = Record<string, unknown>
 
 export type ActivateErrorsData = GenericErrorsData
+
+export type ResendActivationRequestData = {
+  email: string
+}
+
+export type ResendActivationResponseData = Record<string, unknown>
+
+export type ResendActivationErrorsData = GenericErrorsData

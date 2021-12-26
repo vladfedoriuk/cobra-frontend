@@ -16,6 +16,8 @@ import { Controller, useForm } from 'react-hook-form'
 import Router from 'next/router'
 import UserApi from '@api/user'
 import { GetServerSideProps } from 'next'
+import { snackbar } from '@typings/snackbarStore'
+import { handleDetailError, handleFieldsErrors } from '@utils/errors'
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -44,37 +46,38 @@ const Register: React.FC = (): React.ReactElement => {
     await userStore?.register(
       data,
       () => {
-        Router.push('/')
+        Router.push('register/success')
       },
       (errorsData: RegisterErrorsData) => {
-        const fields = new Array<keyof RegisterRequestData>(
+        handleFieldsErrors(
+          errorsData as Record<keyof RegisterErrorsData, unknown>,
+          (fieldName: keyof RegisterRequestData, fieldError: string) =>
+            setError(fieldName, {
+              message: fieldError,
+              type: 'manual',
+            }),
           'username',
-          'email',
           'first_name',
           'last_name',
+          'email',
           'password',
           're_password'
         )
-        fields.forEach((value, _) => {
-          if (value in errorsData) {
-            let message = null
-            if (typeof errorsData[value] == 'string') {
-              message = errorsData[value]
-            } else if (Array.isArray(errorsData[value])) {
-              message = errorsData[value][0]
-            }
-            if (message) {
-              setError(value, {
-                message,
-                type: 'manual',
-              })
-            }
-          }
-        })
+        handleDetailError(errorsData, (detail) =>
+          snackbarStore.push(snackbar(detail, 'error'))
+        )
+      },
+      () => {
+        snackbarStore.push(
+          snackbar(
+            'Cannot connect to the server. Please, check your connection.',
+            'error'
+          )
+        )
       }
     )
   }
-  const { user: userStore } = useMobXStores()
+  const { user: userStore, snackbars: snackbarStore } = useMobXStores()
   return (
     <Container maxWidth="sm">
       <Box

@@ -8,14 +8,16 @@ import {
   RefreshTokenResponseData,
   RegisterRequestData,
   RegisterResponseData,
+  ResendActivationRequestData,
+  ResendActivationResponseData,
 } from '@typings/userApi'
 import {
-  deleteCookie,
-  getCookie,
-  JWT_ACCESS_COOKIE_NAME,
-  JWT_REFRESH_COOKIE_NAME,
-  setCookie,
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+  unauthorizeUser,
 } from '@utils/cookies'
+import { isTokenInvalidResponse } from '@utils/response'
 
 import axios from 'axios'
 import { AxiosResponse } from 'axios'
@@ -71,18 +73,20 @@ export default class UserApi extends BaseApi {
     )
   }
 
+  resendActivation(
+    resendActivatonData: ResendActivationRequestData
+  ): Promise<AxiosResponse<ResendActivationResponseData>> {
+    return this.post<ResendActivationResponseData, ResendActivationRequestData>(
+      'auth/activate/resend/',
+      resendActivatonData
+    )
+  }
+
   async isAuthenticated(
     ctx?: NextPageContext | GetServerSidePropsContext
   ): Promise<boolean> {
-    const accessToken = getCookie({
-      cookieName: JWT_ACCESS_COOKIE_NAME,
-      ctx,
-    })
-    const refreshToken = getCookie({
-      cookieName: JWT_REFRESH_COOKIE_NAME,
-      ctx,
-    })
-
+    const accessToken = getAccessToken({ ctx })
+    const refreshToken = getRefreshToken({ ctx })
     if (!accessToken || !refreshToken) {
       return false
     }
@@ -90,30 +94,17 @@ export default class UserApi extends BaseApi {
       .then(() => true)
       .catch(async (error) => {
         if (axios.isAxiosError(error)) {
-          if (error?.response?.data?.detail?.code === 'token_not_valid') {
+          if (isTokenInvalidResponse(error)) {
             return await this.refreshToken(refreshToken)
               .then((response) => {
                 const { access } = response?.data
-                setCookie({
-                  cookieName: JWT_ACCESS_COOKIE_NAME,
-                  cookieValue: access,
-                  ctx,
-                })
+                setAccessToken({ ctx, access })
                 return true
               })
               .catch((error) => {
                 if (axios.isAxiosError(error)) {
-                  if (
-                    error?.response?.data?.detail?.code === 'token_not_valid'
-                  ) {
-                    deleteCookie({
-                      cookieName: JWT_ACCESS_COOKIE_NAME,
-                      ctx,
-                    })
-                    deleteCookie({
-                      cookieName: JWT_REFRESH_COOKIE_NAME,
-                      ctx,
-                    })
+                  if (isTokenInvalidResponse(error)) {
+                    unauthorizeUser({ ctx })
                   }
                 }
                 return false

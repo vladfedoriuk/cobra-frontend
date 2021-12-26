@@ -17,6 +17,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginErrorsData, LoginRequestData } from '@typings/userApi'
 import { snackbar } from '@typings/snackbarStore'
+import { handleDetailError, handleFieldsErrors } from '@utils/errors'
 
 const schema = yup
   .object({
@@ -42,28 +43,27 @@ const LoginPage: React.FC = (): React.ReactElement => {
         Router.push('/')
       },
       (errorsData: LoginErrorsData) => {
-        const fields = new Array<keyof LoginRequestData>('username', 'password')
-        fields.forEach((value, _) => {
-          if (value in errorsData) {
-            let message = null
-            if (typeof errorsData[value] == 'string') {
-              message = errorsData[value]
-            } else if (Array.isArray(errorsData[value])) {
-              message = errorsData[value][0]
-            }
-            if (message) {
-              setError(value, {
-                message,
-                type: 'manual',
-              })
-            }
-          }
-        })
-        if ('detail' in errorsData) {
-          if (typeof errorsData.detail === 'string') {
-            snackbarStore.push(snackbar(errorsData.detail, 'error'))
-          }
-        }
+        handleFieldsErrors(
+          errorsData as Record<keyof LoginErrorsData, unknown>,
+          (fieldName: keyof LoginRequestData, fieldError: string) =>
+            setError(fieldName, {
+              message: fieldError,
+              type: 'manual',
+            }),
+          'username',
+          'password'
+        )
+        handleDetailError(errorsData, (detail) =>
+          snackbarStore.push(snackbar(detail, 'error'))
+        )
+      },
+      () => {
+        snackbarStore.push(
+          snackbar(
+            'Cannot connect to the server. Please, check your connection.',
+            'error'
+          )
+        )
       }
     )
   }
