@@ -42,7 +42,7 @@ const ActivationPage: React.FC<ActivationPageProps> = ({
         </Alert>
       ) : (
         <Alert severity="error">
-          The activation link has expired or is corrupted.
+          The activation link has expired or is broken.
         </Alert>
       )}
     </Container>

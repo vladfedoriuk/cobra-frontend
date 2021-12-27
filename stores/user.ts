@@ -14,6 +14,12 @@ import {
   ResendActivationErrorsData,
   ResendActivationRequestData,
   ResendActivationResponseData,
+  PasswordResetErrorsData,
+  PasswordResetRequestData,
+  PasswordResetResponseData,
+  PasswordResetConfirmErrorsData,
+  PasswordResetConfirmRequestData,
+  PasswordResetConfirmResponseData,
 } from '@typings/userApi'
 import { authorizeUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
@@ -29,6 +35,50 @@ export default class UserStore extends BaseStore<UserType> {
       user: observable,
       register: action.bound,
     })
+  }
+
+  async passwordReset(
+    passwordResetData: PasswordResetRequestData,
+    onSuccess: (data: PasswordResetResponseData) => void = null,
+    onBadResponse: (data: PasswordResetErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<PasswordResetRequestData>
+    ) => void = null
+  ): Promise<PasswordResetResponseData | void> {
+    return await UserApi.withErrorsHandling(
+      this.api
+        .passwordReset(passwordResetData)
+        .then((response: AxiosResponse<PasswordResetResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async passwordResetConfirm(
+    passwordResetConfirmData: PasswordResetConfirmRequestData,
+    onSuccess: (data: PasswordResetConfirmResponseData) => void = null,
+    onBadResponse: (data: PasswordResetConfirmErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<PasswordResetConfirmRequestData>
+    ) => void = null
+  ): Promise<PasswordResetConfirmResponseData | void> {
+    return await UserApi.withErrorsHandling(
+      this.api
+        .passwordResetConfirm(passwordResetConfirmData)
+        .then((response: AxiosResponse<PasswordResetConfirmResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
   }
 
   async resendActivation(

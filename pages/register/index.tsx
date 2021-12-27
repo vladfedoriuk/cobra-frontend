@@ -50,7 +50,7 @@ const Register: React.FC = (): React.ReactElement => {
       },
       (errorsData: RegisterErrorsData) => {
         handleFieldsErrors(
-          errorsData as Record<keyof RegisterErrorsData, unknown>,
+          errorsData as Record<keyof RegisterRequestData, unknown>,
           (fieldName: keyof RegisterRequestData, fieldError: string) =>
             setError(fieldName, {
               message: fieldError,

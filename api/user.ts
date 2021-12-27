@@ -4,6 +4,10 @@ import {
   ActivateResponseData,
   LoginRequestData,
   LoginResponseData,
+  PasswordResetConfirmRequestData,
+  PasswordResetConfirmResponseData,
+  PasswordResetRequestData,
+  PasswordResetResponseData,
   RefreshTokenRequestData,
   RefreshTokenResponseData,
   RegisterRequestData,
@@ -11,6 +15,7 @@ import {
   ResendActivationRequestData,
   ResendActivationResponseData,
 } from '@typings/userApi'
+import { NextContext } from '@typings/utils'
 import {
   getAccessToken,
   getRefreshToken,
@@ -21,7 +26,6 @@ import { isTokenInvalidResponse } from '@utils/response'
 
 import axios from 'axios'
 import { AxiosResponse } from 'axios'
-import { GetServerSidePropsContext, NextPageContext } from 'next'
 
 export default class UserApi extends BaseApi {
   login(
@@ -82,9 +86,25 @@ export default class UserApi extends BaseApi {
     )
   }
 
-  async isAuthenticated(
-    ctx?: NextPageContext | GetServerSidePropsContext
-  ): Promise<boolean> {
+  passwordReset(
+    passwordResetData: PasswordResetRequestData
+  ): Promise<AxiosResponse<PasswordResetResponseData>> {
+    return this.post<PasswordResetResponseData, PasswordResetRequestData>(
+      'auth/reset_password/',
+      passwordResetData
+    )
+  }
+
+  passwordResetConfirm(
+    passwordResetConfirmData: PasswordResetConfirmRequestData
+  ): Promise<AxiosResponse<PasswordResetConfirmResponseData>> {
+    return this.post<
+      PasswordResetConfirmResponseData,
+      PasswordResetConfirmRequestData
+    >('auth/reset_password/confirm/', passwordResetConfirmData)
+  }
+
+  async isAuthenticated(ctx: NextContext['ctx']): Promise<boolean> {
     const accessToken = getAccessToken({ ctx })
     const refreshToken = getRefreshToken({ ctx })
     if (!accessToken || !refreshToken) {

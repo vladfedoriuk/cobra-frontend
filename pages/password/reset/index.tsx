@@ -2,14 +2,13 @@ import React from 'react'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
-  ResendActivationErrorsData,
-  ResendActivationRequestData,
+  PasswordResetErrorsData,
+  PasswordResetRequestData,
 } from '@typings/userApi'
 import useMobXStores from '@hooks/stores'
 import { snackbar } from '@typings/snackbarStore'
 import { GetServerSideProps } from 'next'
 import UserApi from '@api/user'
-import EmailIcon from '@mui/icons-material/Email'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Container,
@@ -25,6 +24,7 @@ import {
   handleDetailError,
   handleListErrors,
 } from '@utils/errors'
+import LockIcon from '@mui/icons-material/Lock'
 
 const schema = yup
   .object({
@@ -32,32 +32,32 @@ const schema = yup
   })
   .required()
 
-const ResendActivation: React.FC = (): React.ReactElement => {
+const PasswordReset: React.FC = (): React.ReactElement => {
   const {
     handleSubmit,
     control,
     formState: { errors },
     setError,
-  } = useForm<ResendActivationRequestData>({
+  } = useForm<PasswordResetRequestData>({
     resolver: yupResolver(schema),
   })
   const { user: userStore, snackbars: snackbarStore } = useMobXStores()
 
-  const onSubmit = async (data: ResendActivationRequestData) => {
-    await userStore?.resendActivation(
+  const onSubmit = async (data: PasswordResetRequestData) => {
+    await userStore?.passwordReset(
       data,
       () => {
         snackbarStore.push(
-          snackbar('The activation email has been resend.', 'success')
+          snackbar('The password reset email has been sent.', 'success')
         )
       },
-      (errorsData: ResendActivationErrorsData) => {
+      (errorsData: PasswordResetErrorsData) => {
         handleListErrors(errorsData, (message) =>
           snackbarStore.push(snackbar(message, 'error'))
         )
         handleFieldsErrors(
-          errorsData as Record<keyof ResendActivationErrorsData, unknown>,
-          (fieldName: keyof ResendActivationRequestData, fieldError: string) =>
+          errorsData as Record<keyof PasswordResetErrorsData, unknown>,
+          (fieldName: keyof PasswordResetRequestData, fieldError: string) =>
             setError(fieldName, {
               message: fieldError,
               type: 'manual',
@@ -94,10 +94,10 @@ const ResendActivation: React.FC = (): React.ReactElement => {
             m: 1,
           }}
         >
-          <EmailIcon />
+          <LockIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Resend Activation
+          Provide a new password
         </Typography>
         <Box component="form" noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2}>
@@ -152,4 +152,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default ResendActivation
+export default PasswordReset

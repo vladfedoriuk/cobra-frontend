@@ -22,10 +22,17 @@ export type RegisterData = {
 }
 export type LoginErrorsData = GenericErrorsData
 
-export type RegisterRequestData = RegisterData & {
+type PasswordsMixin = {
   password: string
   re_password: string
 }
+
+type NewPasswordsMixin = {
+  new_password: string
+  re_new_password: string
+}
+
+export type RegisterRequestData = RegisterData & PasswordsMixin
 
 export type RegisterErrorsData = GenericErrorsData
 
@@ -39,19 +46,34 @@ export type RefreshTokenResponseData = {
   access: string
 }
 
-export type ActivateRequestData = {
+type UidAndTokenMixin = {
   uid: string
   token: string
 }
+export type ActivateRequestData = UidAndTokenMixin
 
 export type ActivateResponseData = Record<string, unknown>
 
 export type ActivateErrorsData = GenericErrorsData
 
-export type ResendActivationRequestData = {
+type EmailData = {
   email: string
 }
+export type ResendActivationRequestData = EmailData
 
 export type ResendActivationResponseData = Record<string, unknown>
 
 export type ResendActivationErrorsData = GenericErrorsData
+
+export type PasswordResetRequestData = EmailData
+
+export type PasswordResetResponseData = Record<string, unknown>
+
+export type PasswordResetErrorsData = GenericErrorsData
+
+export type PasswordResetConfirmRequestData = UidAndTokenMixin &
+  NewPasswordsMixin
+
+export type PasswordResetConfirmResponseData = Record<string, unknown>
+
+export type PasswordResetConfirmErrorsData = GenericErrorsData

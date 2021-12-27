@@ -44,7 +44,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
       },
       (errorsData: LoginErrorsData) => {
         handleFieldsErrors(
-          errorsData as Record<keyof LoginErrorsData, unknown>,
+          errorsData as Record<keyof LoginRequestData, unknown>,
           (fieldName: keyof LoginRequestData, fieldError: string) =>
             setError(fieldName, {
               message: fieldError,
@@ -139,7 +139,7 @@ const LoginPage: React.FC = (): React.ReactElement => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href="/password/reset" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
