@@ -104,7 +104,7 @@ export default class UserApi extends BaseApi {
     >('auth/reset_password/confirm/', passwordResetConfirmData)
   }
 
-  async isAuthenticated(ctx: NextContext['ctx']): Promise<boolean> {
+  async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
     const accessToken = getAccessToken({ ctx })
     const refreshToken = getRefreshToken({ ctx })
     if (!accessToken || !refreshToken) {

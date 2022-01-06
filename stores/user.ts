@@ -37,6 +37,10 @@ export default class UserStore extends BaseStore<UserType> {
     })
   }
 
+  async isAuthenticated(): Promise<boolean> {
+    return await this.api.isAuthenticated()
+  }
+
   async passwordReset(
     passwordResetData: PasswordResetRequestData,
     onSuccess: (data: PasswordResetResponseData) => void = null,
