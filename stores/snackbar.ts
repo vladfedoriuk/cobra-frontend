@@ -9,6 +9,7 @@ export default class SnackBarStore extends BaseStore<Record<string, unknown>> {
   constructor(rootStore: Readonly<RootStore>) {
     super(rootStore)
     makeObservable(this, {
+      hydrate: action.bound,
       snackbars: observable,
       current: computed,
       toDisplay: computed,

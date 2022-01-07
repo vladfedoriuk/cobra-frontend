@@ -10,7 +10,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import theme from '@styles/theme'
 import CssBaseline from '@mui/material/CssBaseline'
 import { SnackBarProvider } from '@providers/snackbar'
-import { DashboardProvider } from '@providers/dashboard'
+import { DrawerProvider } from '@providers/drawer'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -42,12 +42,12 @@ class MyApp extends App<MyAppProps> {
         </Head>
         <MobXStoresProvider initialStoresData={hydrationData}>
           <ThemeProvider theme={theme}>
-            <DashboardProvider>
+            <DrawerProvider>
               <CssBaseline />
               <SnackBarProvider>
                 <Component {...pageProps} />
               </SnackBarProvider>
-            </DashboardProvider>
+            </DrawerProvider>
           </ThemeProvider>
         </MobXStoresProvider>
       </CacheProvider>

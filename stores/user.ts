@@ -38,10 +38,13 @@ export default class UserStore extends BaseStore<UserType> {
     super(rootStore)
     this.api = new UserApi()
     makeObservable(this, {
+      hydrate: action.bound,
       user: observable,
       setProfileData: action.bound,
       resetProfileData: action.bound,
       isUserEmpty: computed,
+      patchProfile: action.bound,
+      getProfile: action.bound,
     })
   }
 

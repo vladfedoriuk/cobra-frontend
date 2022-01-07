@@ -18,6 +18,9 @@ import Button from '@mui/material/Button'
 import { snackbar } from '@typings/snackbarStore'
 import { handleFieldsErrors, handleDetailError } from '@utils/errors'
 import Alert from '@mui/material/Alert'
+import { observer } from 'mobx-react-lite'
+import UserApi from '@api/user'
+import { GetServerSideProps } from 'next'
 
 const schema = yup
   .object({
@@ -220,4 +223,20 @@ const Profile: React.FC = (): React.ReactElement => {
   )
 }
 
-export default Profile
+export default observer(Profile)
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const api = new UserApi()
+  const isAuthenticated = await api.isAuthenticated(context)
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
+  }
+  return {
+    props: {},
+  }
+}

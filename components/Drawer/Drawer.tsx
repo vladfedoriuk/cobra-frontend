@@ -59,7 +59,7 @@ const MyDrawer: React.FC = ({ children }) => {
     userStore
       .isAuthenticated()
       .then((isAuthenticated) => setIsAuthenticated(isAuthenticated))
-  }, [isAuthenticated, userStore.user])
+  }, [isAuthenticated, userStore?.user])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -108,7 +108,14 @@ const MyDrawer: React.FC = ({ children }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose()
+                    Router.push('/profile')
+                  }}
+                >
+                  Profile
+                </MenuItem>
               </Menu>
             </Box>
           )}
@@ -140,7 +147,7 @@ const MyDrawer: React.FC = ({ children }) => {
             onClick={() => {
               if (isAuthenticated) {
                 unauthorizeUser({})
-                userStore.resetProfileData()
+                userStore?.resetProfileData()
               }
               Router.push('/login')
             }}
