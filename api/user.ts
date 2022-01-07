@@ -2,6 +2,7 @@ import BaseApi from '@api/base'
 import {
   ActivateRequestData,
   ActivateResponseData,
+  GetProfileResponseData,
   LoginRequestData,
   LoginResponseData,
   PasswordResetConfirmRequestData,
@@ -24,10 +25,24 @@ import {
 } from '@utils/cookies'
 import { isTokenInvalidResponse } from '@utils/response'
 
-import axios from 'axios'
+import axios, { AxiosRequestHeaders } from 'axios'
 import { AxiosResponse } from 'axios'
 
 export default class UserApi extends BaseApi {
+  authorizationHeaders(ctx: NextContext['ctx'] = null): AxiosRequestHeaders {
+    return {
+      Authorization: `JWT ${getAccessToken({ ctx })}`,
+    }
+  }
+
+  getProfile(
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetProfileResponseData>> {
+    return this.get<GetProfileResponseData>('auth/me', {
+      headers: { ...this.authorizationHeaders(ctx) },
+    })
+  }
+
   login(
     loginData: LoginRequestData
   ): Promise<AxiosResponse<LoginResponseData>> {

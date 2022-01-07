@@ -16,7 +16,7 @@ const clientSideEmotionCache = createEmotionCache()
 
 class MyApp extends App<MyAppProps> {
   static async getInitialProps(appContext: AppContext): Promise<any> {
-    const initialStoresData = await fetchInitialStoresData()
+    const initialStoresData = await fetchInitialStoresData(appContext.ctx)
     const appProps = await App.getInitialProps(appContext)
     return {
       ...appProps,

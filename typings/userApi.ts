@@ -77,3 +77,10 @@ export type PasswordResetConfirmRequestData = UidAndTokenMixin &
 export type PasswordResetConfirmResponseData = Record<string, unknown>
 
 export type PasswordResetConfirmErrorsData = GenericErrorsData
+
+type IDMixin = {
+  id: number
+}
+export type GetProfileResponseData = RegisterData & IDMixin
+
+export type GetProfileErrorData = GenericErrorsData

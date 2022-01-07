@@ -1,4 +1,4 @@
-import MyDrawer from '@components/drawer'
+import MyDrawer from '@components/Drawer'
 import React from 'react'
 
 export const DashboardProvider: React.FC = ({

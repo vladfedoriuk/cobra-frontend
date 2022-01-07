@@ -29,7 +29,7 @@ const schema = yup
       .string()
       .required('repeat password is a required field.')
       .test('passwords-match', 'passwords must match', function (value) {
-        return this.parent.password === value
+        return this.parent.new_password === value
       }),
   })
   .required()

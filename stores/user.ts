@@ -20,9 +20,12 @@ import {
   PasswordResetConfirmErrorsData,
   PasswordResetConfirmRequestData,
   PasswordResetConfirmResponseData,
+  GetProfileErrorData,
+  GetProfileResponseData,
 } from '@typings/userApi'
 import { authorizeUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { NextContext } from '@typings/utils'
 
 export default class UserStore extends BaseStore<UserType> {
   user: UserType = {} as UserType
@@ -33,12 +36,48 @@ export default class UserStore extends BaseStore<UserType> {
     this.api = new UserApi()
     makeObservable(this, {
       user: observable,
-      register: action.bound,
+      setProfileData: action.bound,
+      resetProfileData: action.bound,
     })
   }
 
-  async isAuthenticated(): Promise<boolean> {
-    return await this.api.isAuthenticated()
+  async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
+    return await this.api.isAuthenticated(ctx)
+  }
+
+  setProfileData(data: GetProfileResponseData): void {
+    const { id, email, username, first_name, last_name } = data
+    runInAction(() => {
+      this.user.id = id
+      this.user.email = email
+      this.user.username = username
+      this.user.firstName = first_name
+      this.user.lastName = last_name
+    })
+  }
+
+  resetProfileData(): void {
+    this.user = {} as UserType
+  }
+
+  async getProfile(
+    onSuccess: (data: PasswordResetResponseData) => void = null,
+    onBadResponse: (data: GetProfileErrorData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProfileResponseData | void> {
+    return await UserApi.withErrorsHandling(
+      this.api
+        .getProfile()
+        .then((response: AxiosResponse<GetProfileResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          this.setProfileData(response.data)
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
   }
 
   async passwordReset(
@@ -119,12 +158,6 @@ export default class UserStore extends BaseStore<UserType> {
       this.api
         .register(registerData)
         .then((response: AxiosResponse<RegisterResponseData>) => {
-          runInAction(() => {
-            this.user.firstName = registerData.first_name
-            this.user.lastName = registerData.last_name
-            this.user.email = registerData.email
-            this.user.username = registerData.username
-          })
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

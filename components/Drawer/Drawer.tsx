@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled, useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { AppBar, Drawer } from './appbar'
+import { AppBar, Drawer } from './AppBar'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
@@ -18,6 +18,11 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import SourceIcon from '@mui/icons-material/Source'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import useMobXStores from '@hooks/stores'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import Router from 'next/router'
+import { unauthorizeUser } from '@utils/cookies'
+import { observer } from 'mobx-react-lite'
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -50,9 +55,11 @@ const MyDrawer: React.FC = ({ children }) => {
   }
 
   const { user: userStore } = useMobXStores()
-  userStore
-    .isAuthenticated()
-    .then((isAuthenticated) => setIsAuthenticated(isAuthenticated))
+  useEffect(() => {
+    userStore
+      .isAuthenticated()
+      .then((isAuthenticated) => setIsAuthenticated(isAuthenticated))
+  }, [isAuthenticated, userStore.user])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -127,6 +134,23 @@ const MyDrawer: React.FC = ({ children }) => {
           </ListItem>
         </List>
         <Divider />
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              if (isAuthenticated) {
+                unauthorizeUser({})
+                userStore.resetProfileData()
+              }
+              Router.push('/login')
+            }}
+          >
+            <ListItemIcon>
+              {!isAuthenticated ? <LoginIcon /> : <LogoutIcon />}
+            </ListItemIcon>
+            <ListItemText primary={!isAuthenticated ? 'Login' : 'Logout'} />
+          </ListItem>
+        </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
@@ -136,4 +160,4 @@ const MyDrawer: React.FC = ({ children }) => {
   )
 }
 
-export default MyDrawer
+export default observer(MyDrawer)
