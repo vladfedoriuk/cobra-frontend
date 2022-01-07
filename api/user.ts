@@ -9,6 +9,8 @@ import {
   PasswordResetConfirmResponseData,
   PasswordResetRequestData,
   PasswordResetResponseData,
+  PatchProfileRequestData,
+  PatchProfileResponseData,
   RefreshTokenRequestData,
   RefreshTokenResponseData,
   RegisterRequestData,
@@ -25,14 +27,21 @@ import {
 } from '@utils/cookies'
 import { isTokenInvalidResponse } from '@utils/response'
 
-import axios, { AxiosRequestHeaders } from 'axios'
+import axios from 'axios'
 import { AxiosResponse } from 'axios'
 
 export default class UserApi extends BaseApi {
-  authorizationHeaders(ctx: NextContext['ctx'] = null): AxiosRequestHeaders {
-    return {
-      Authorization: `JWT ${getAccessToken({ ctx })}`,
-    }
+  patchProfile(
+    patchProfileData: PatchProfileRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<PatchProfileResponseData>> {
+    return this.patch<PatchProfileResponseData, PatchProfileRequestData>(
+      'auth/me/',
+      patchProfileData,
+      {
+        headers: { ...this.authorizationHeaders(ctx) },
+      }
+    )
   }
 
   getProfile(

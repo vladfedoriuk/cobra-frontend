@@ -1,3 +1,5 @@
+import { IDMixin } from '@utils/typings'
+
 export type LoginRequestData = {
   username: string
   password: string
@@ -78,9 +80,12 @@ export type PasswordResetConfirmResponseData = Record<string, unknown>
 
 export type PasswordResetConfirmErrorsData = GenericErrorsData
 
-type IDMixin = {
-  id: number
-}
 export type GetProfileResponseData = RegisterData & IDMixin
 
 export type GetProfileErrorData = GenericErrorsData
+
+export type PatchProfileRequestData = RegisterData & IDMixin
+
+export type PatchProfileErrorData = GenericErrorsData
+
+export type PatchProfileResponseData = RegisterData & IDMixin

@@ -23,7 +23,7 @@ const schema = yup.object({
   username: yup.string().required(),
   first_name: yup.string().required('first name is a required field.'),
   last_name: yup.string().required('last name is a required field.'),
-  email: yup.string().required(),
+  email: yup.string().email().required(),
   password: yup.string().required(),
   re_password: yup
     .string()

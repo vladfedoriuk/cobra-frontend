@@ -1,7 +1,18 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {
+  AxiosRequestConfig,
+  AxiosRequestHeaders,
+  AxiosResponse,
+} from 'axios'
 import getAxiosInstance from '@api/axiosInstanse'
+import { NextContext } from '@typings/utils'
+import { getAccessToken } from '@utils/cookies'
 
 export default abstract class BaseApi {
+  authorizationHeaders(ctx: NextContext['ctx'] = null): AxiosRequestHeaders {
+    return {
+      Authorization: `JWT ${getAccessToken({ ctx })}`,
+    }
+  }
   get _commonConfigOptions(): Partial<AxiosRequestConfig> {
     return {}
   }

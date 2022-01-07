@@ -1,5 +1,5 @@
 import BaseStore from '@stores/base'
-import { action, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { RootStore } from '@stores/root'
 import { User as UserType } from '@typings/userStore'
 import UserApi from '@api/user'
@@ -22,6 +22,9 @@ import {
   PasswordResetConfirmResponseData,
   GetProfileErrorData,
   GetProfileResponseData,
+  PatchProfileResponseData,
+  PatchProfileErrorData,
+  PatchProfileRequestData,
 } from '@typings/userApi'
 import { authorizeUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
@@ -38,11 +41,16 @@ export default class UserStore extends BaseStore<UserType> {
       user: observable,
       setProfileData: action.bound,
       resetProfileData: action.bound,
+      isUserEmpty: computed,
     })
   }
 
   async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
     return await this.api.isAuthenticated(ctx)
+  }
+
+  get isUserEmpty(): boolean {
+    return Boolean(Object.keys(this.user).length === 0)
   }
 
   setProfileData(data: GetProfileResponseData): void {
@@ -60,8 +68,31 @@ export default class UserStore extends BaseStore<UserType> {
     this.user = {} as UserType
   }
 
+  async patchProfile(
+    patchProfileData: PatchProfileRequestData,
+    onSuccess: (data: PatchProfileResponseData) => void = null,
+    onBadResponse: (data: PatchProfileErrorData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<PatchProfileRequestData>
+    ) => void = null
+  ): Promise<PatchProfileResponseData | void> {
+    return await UserApi.withErrorsHandling(
+      this.api
+        .patchProfile(patchProfileData)
+        .then((response: AxiosResponse<PatchProfileResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          this.setProfileData(response.data)
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
   async getProfile(
-    onSuccess: (data: PasswordResetResponseData) => void = null,
+    onSuccess: (data: GetProfileResponseData) => void = null,
     onBadResponse: (data: GetProfileErrorData) => void = null,
     onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
   ): Promise<GetProfileResponseData | void> {
