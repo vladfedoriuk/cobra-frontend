@@ -26,9 +26,10 @@ import {
   PatchProfileErrorData,
   PatchProfileRequestData,
 } from '@typings/userApi'
-import { authorizeUser } from '@utils/cookies'
+import { authenticateUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { NextContext } from '@typings/utils'
+import { convertUserData } from '@utils/user'
 
 export default class UserStore extends BaseStore<UserType> {
   user: UserType = {} as UserType
@@ -57,13 +58,8 @@ export default class UserStore extends BaseStore<UserType> {
   }
 
   setProfileData(data: GetProfileResponseData): void {
-    const { id, email, username, first_name, last_name } = data
     runInAction(() => {
-      this.user.id = id
-      this.user.email = email
-      this.user.username = username
-      this.user.firstName = first_name
-      this.user.lastName = last_name
+      this.user = convertUserData(data)
     })
   }
 
@@ -214,7 +210,7 @@ export default class UserStore extends BaseStore<UserType> {
       this.api
         .login(loginData)
         .then((response: AxiosResponse<LoginResponseData>) => {
-          authorizeUser(response.data)
+          authenticateUser(response.data)
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

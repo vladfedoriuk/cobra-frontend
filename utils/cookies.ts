@@ -6,7 +6,7 @@ import {
   GetCookieParams,
   SetCookieParams,
   DeleteCookieParams,
-  AuthorizeUserData,
+  AuthenticateUserData,
   NextContext,
   AccessTokenData,
   RefreshTokenData,
@@ -114,16 +114,16 @@ export const deleteRefreshToken = ({ ctx }: NextContext): void => {
   })
 }
 
-export const authorizeUser = ({
+export const authenticateUser = ({
   access,
   refresh,
   ctx,
-}: AuthorizeUserData): void => {
+}: AuthenticateUserData): void => {
   setAccessToken({ ctx, access })
   setRefreshToken({ ctx, refresh })
 }
 
-export const unauthorizeUser = ({ ctx }: NextContext): void => {
+export const unauthenticateUser = ({ ctx }: NextContext): void => {
   deleteAccessToken({ ctx })
   deleteRefreshToken({ ctx })
 }

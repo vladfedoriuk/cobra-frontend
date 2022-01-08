@@ -21,7 +21,7 @@ import useMobXStores from '@hooks/stores'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Router from 'next/router'
-import { unauthorizeUser } from '@utils/cookies'
+import { unauthenticateUser } from '@utils/cookies'
 import { observer } from 'mobx-react-lite'
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
@@ -146,7 +146,7 @@ const MyDrawer: React.FC = ({ children }) => {
             button
             onClick={() => {
               if (isAuthenticated) {
-                unauthorizeUser({})
+                unauthenticateUser({})
                 userStore?.resetProfileData()
               }
               Router.push('/login')

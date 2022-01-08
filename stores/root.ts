@@ -6,13 +6,16 @@ import {
 } from '@typings/rootStore'
 import UserStore from '@stores/user'
 import SnackBarStore from '@stores/snackbar'
+import ProjectStore from '@stores/project'
 import UserApi from '@api/user'
 import { NextContext } from '@typings/utils'
 import { User as UserType } from '@typings/userStore'
+import { convertUserData } from '@utils/user'
 
 const StoreClassesMap = new Map<RootStoreMapKeys, RootStoreMapValues>([
   ['user', UserStore],
   ['snackbars', SnackBarStore],
+  ['projects', ProjectStore],
 ])
 
 export class RootStore {
@@ -55,25 +58,20 @@ export const fetchInitialStoresData = async (
   ctx: NextContext['ctx'] = null
 ): Promise<InitialStoresData> => {
   // You can do anything to fetch initial store state
+
   const userApi = new UserApi()
-  let profileData: UserType = null
+  let profileData = {} as UserType
   if (userApi.isAuthenticated(ctx)) {
     try {
-      const {
-        data: { id, username, email, first_name, last_name },
-      } = await userApi.getProfile(ctx)
-      profileData = {
-        id,
-        username,
-        email,
-        firstName: first_name,
-        lastName: last_name,
-      }
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
+      const { data } = await userApi.getProfile(ctx)
+      profileData = convertUserData(data)
+    } catch (e) {
+      profileData = null
+    }
   }
   return {
     user: { user: profileData },
     snackbars: null,
+    projects: null,
   }
 }

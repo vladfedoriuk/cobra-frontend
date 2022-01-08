@@ -8,7 +8,7 @@ import { NextContext } from '@typings/utils'
 import { getAccessToken } from '@utils/cookies'
 
 export default abstract class BaseApi {
-  authorizationHeaders(ctx: NextContext['ctx'] = null): AxiosRequestHeaders {
+  authenticationHeaders(ctx: NextContext['ctx'] = null): AxiosRequestHeaders {
     return {
       Authorization: `JWT ${getAccessToken({ ctx })}`,
     }

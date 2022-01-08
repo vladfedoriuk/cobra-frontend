@@ -1,4 +1,4 @@
-import { IDMixin } from '@utils/typings'
+import { GenericErrorsData, IDMixin } from '@typings/utils'
 
 export type LoginRequestData = {
   username: string
@@ -9,12 +9,6 @@ export type LoginResponseData = {
   access: string
   refresh: string
 }
-
-type GenericErrorsData =
-  | {
-      [k: string]: string | string[]
-    }
-  | string[]
 
 export type RegisterData = {
   first_name: string

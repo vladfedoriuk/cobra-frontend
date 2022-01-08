@@ -1,6 +1,6 @@
 import ProfileHeader from '@components/Profile/ProfileHeader'
 import useMobXStores from '@hooks/stores'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit'
 import Box from '@mui/system/Box'
 import IconButton from '@mui/material/IconButton'
@@ -33,6 +33,29 @@ const schema = yup
 
 const Profile: React.FC = (): React.ReactElement => {
   const { user: userStore, snackbars: snackbarStore } = useMobXStores()
+
+  useEffect(() => {
+    userStore?.getProfile(
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      () => {},
+      () => {
+        snackbarStore.push(
+          snackbar(
+            'Failed to reload the profile. Please, try once again later.',
+            'error'
+          )
+        )
+      },
+      () => {
+        snackbarStore.push(
+          snackbar(
+            'Cannot connect to the server. Please, check your connection.',
+            'error'
+          )
+        )
+      }
+    )
+  }, [userStore?.user])
 
   const {
     handleSubmit,
@@ -136,7 +159,6 @@ const Profile: React.FC = (): React.ReactElement => {
                   variant="standard"
                   error={Boolean(errors.username)}
                   helperText={errors.username?.message}
-                  required
                   fullWidth
                   id="username"
                   label="Username"
@@ -156,7 +178,6 @@ const Profile: React.FC = (): React.ReactElement => {
                   variant="standard"
                   error={Boolean(errors.email)}
                   helperText={errors.email?.message}
-                  required
                   fullWidth
                   id="email"
                   label="Email Address"
@@ -177,7 +198,6 @@ const Profile: React.FC = (): React.ReactElement => {
                   helperText={errors.first_name?.message}
                   autoComplete="given-name"
                   name="first_name"
-                  required
                   fullWidth
                   id="first_name"
                   label="First Name"
@@ -196,7 +216,6 @@ const Profile: React.FC = (): React.ReactElement => {
                   helperText={errors.last_name?.message}
                   autoComplete="family-name"
                   name="last_name"
-                  required
                   fullWidth
                   id="last_name"
                   label="Last Name"

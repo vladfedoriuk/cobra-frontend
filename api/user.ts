@@ -23,7 +23,7 @@ import {
   getAccessToken,
   getRefreshToken,
   setAccessToken,
-  unauthorizeUser,
+  unauthenticateUser,
 } from '@utils/cookies'
 import { isTokenInvalidResponse } from '@utils/response'
 
@@ -39,7 +39,7 @@ export default class UserApi extends BaseApi {
       'auth/me/',
       patchProfileData,
       {
-        headers: { ...this.authorizationHeaders(ctx) },
+        headers: { ...this.authenticationHeaders(ctx) },
       }
     )
   }
@@ -48,7 +48,7 @@ export default class UserApi extends BaseApi {
     ctx: NextContext['ctx'] = null
   ): Promise<AxiosResponse<GetProfileResponseData>> {
     return this.get<GetProfileResponseData>('auth/me', {
-      headers: { ...this.authorizationHeaders(ctx) },
+      headers: { ...this.authenticationHeaders(ctx) },
     })
   }
 
@@ -148,7 +148,7 @@ export default class UserApi extends BaseApi {
               .catch((error) => {
                 if (axios.isAxiosError(error)) {
                   if (isTokenInvalidResponse(error)) {
-                    unauthorizeUser({ ctx })
+                    unauthenticateUser({ ctx })
                   }
                 }
                 return false
