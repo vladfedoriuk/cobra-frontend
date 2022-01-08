@@ -19,7 +19,7 @@ const ActivationPage: React.FC<ActivationPageProps> = ({
   data,
 }): React.ReactElement => {
   if (data === null) {
-    return <DefaultErrorPage statusCode={status} />
+    return <DefaultErrorPage statusCode={Number(status ?? 500)} />
   }
   return (
     <Container sx={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (
   return {
     props: {
       success: validateResponse(response),
-      status: Number(response?.status ?? 500),
+      status: response?.status ?? null,
       data: response?.data ?? null,
     },
   }

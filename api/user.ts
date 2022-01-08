@@ -47,7 +47,7 @@ export default class UserApi extends BaseApi {
   getProfile(
     ctx: NextContext['ctx'] = null
   ): Promise<AxiosResponse<GetProfileResponseData>> {
-    return this.get<GetProfileResponseData>('auth/me', {
+    return this.get<GetProfileResponseData>('auth/me/', {
       headers: { ...this.authenticationHeaders(ctx) },
     })
   }

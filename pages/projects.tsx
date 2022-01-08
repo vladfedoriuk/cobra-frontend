@@ -11,7 +11,7 @@ const Projects: React.FC = (): React.ReactElement => {
 
   useEffect(() => {
     projectsStore?.getProjects()
-  }, [projectsStore?.projects])
+  }, [])
 
   return (
     <>

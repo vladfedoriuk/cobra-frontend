@@ -81,7 +81,7 @@ const MyDrawer: React.FC = ({ children }) => {
             Cobra
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          {isAuthenticated && (
+          {!userStore?.isUserEmpty && isAuthenticated && (
             <Box sx={{ flexGrow: 0 }}>
               <IconButton
                 size="large"
@@ -133,7 +133,17 @@ const MyDrawer: React.FC = ({ children }) => {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => {
+              if (!isAuthenticated) {
+                unauthenticateUser({})
+                userStore?.resetProfileData()
+                Router.push('/login')
+              }
+              Router.push('/projects')
+            }}
+          >
             <ListItemIcon>
               <SourceIcon />
             </ListItemIcon>
@@ -145,9 +155,10 @@ const MyDrawer: React.FC = ({ children }) => {
           <ListItem
             button
             onClick={() => {
-              if (isAuthenticated) {
+              if (isAuthenticated || userStore?.isUserEmpty) {
                 unauthenticateUser({})
                 userStore?.resetProfileData()
+                setIsAuthenticated(false)
               }
               Router.push('/login')
             }}

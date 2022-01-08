@@ -32,8 +32,8 @@ class MyApp extends App<MyAppProps> {
       emotionCache = clientSideEmotionCache,
     } = this.props
     const hydrationData = {
-      ...pageProps.hydrationData,
       ...initialStoresData,
+      ...pageProps.hydrationData,
     }
     return (
       <CacheProvider value={emotionCache}>

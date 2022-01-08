@@ -9,7 +9,6 @@ import SnackBarStore from '@stores/snackbar'
 import ProjectStore from '@stores/project'
 import UserApi from '@api/user'
 import { NextContext } from '@typings/utils'
-import { User as UserType } from '@typings/userStore'
 import { convertUserData } from '@utils/user'
 
 const StoreClassesMap = new Map<RootStoreMapKeys, RootStoreMapValues>([
@@ -60,14 +59,14 @@ export const fetchInitialStoresData = async (
   // You can do anything to fetch initial store state
 
   const userApi = new UserApi()
-  let profileData = {} as UserType
+  let profileData = null
+
   if (userApi.isAuthenticated(ctx)) {
-    try {
-      const { data } = await userApi.getProfile(ctx)
-      profileData = convertUserData(data)
-    } catch (e) {
-      profileData = null
-    }
+    await UserApi.withErrorsHandling(
+      userApi
+        .getProfile(ctx)
+        .then(({ data }) => (profileData = convertUserData(data)))
+    )
   }
   return {
     user: { user: profileData },

@@ -1,7 +1,4 @@
-import {
-  ProjectUser as ProjectUserType,
-  Project as ProjectType,
-} from '@typings/projectStore'
+import { Project as ProjectType } from '@typings/projectStore'
 import BaseStore from '@stores/base'
 import ProjectApi from '@api/project'
 import { RootStore } from './root'
@@ -9,12 +6,14 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import {
   GetProjectsResponseData,
   GetProjectsErrorsData,
-  ProjectUserData,
   CreateProjectErrorsData,
   CreateProjectRequestData,
   CreateProjectResponseData,
+  GetProjectErrorsData,
+  GetProjectResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { transformProjectsData } from '@utils/project'
 
 export default class ProjectStore extends BaseStore<ProjectType> {
   projects: Array<ProjectType> = new Array<ProjectType>()
@@ -27,8 +26,8 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       hydrate: action.bound,
       projects: observable,
       getProjects: action.bound,
-      setProjectsData: action.bound,
       areProjectsEmpty: computed,
+      setProjectsData: action.bound,
     })
   }
 
@@ -36,36 +35,8 @@ export default class ProjectStore extends BaseStore<ProjectType> {
     return Boolean(this.projects.length === 0)
   }
 
-  transformtUser(userData: ProjectUserData): ProjectUserType {
-    const { id, username, full_name } = userData
-    return { id, username, fullName: full_name }
-  }
-
-  setProjectsData(projectsData: GetProjectsResponseData): void {
-    this.projects = projectsData.map((project) => {
-      const {
-        id,
-        title,
-        description,
-        slug,
-        is_creator,
-        membership_role,
-        creator,
-        members,
-      } = project
-      return {
-        id,
-        title,
-        description,
-        slug,
-        isCreator: is_creator,
-        membershipRole: membership_role,
-        creator: this.transformtUser(creator),
-        members: members.map((member) => {
-          return this.transformtUser(member)
-        }),
-      }
-    })
+  setProjectsData(projectData: GetProjectsResponseData): void {
+    this.projects = transformProjectsData(projectData)
   }
 
   async getProjects(
@@ -83,6 +54,26 @@ export default class ProjectStore extends BaseStore<ProjectType> {
           runInAction(() => {
             this.setProjectsData(response.data)
           })
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+  async getProject(
+    username: string,
+    slug: string,
+    onSuccess: (data: GetProjectResponseData) => void = null,
+    onBadResponse: (data: GetProjectErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProjectResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getProject(username, slug)
+        .then((response: AxiosResponse<GetProjectResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
           return response.data
         }),
       onBadResponse,

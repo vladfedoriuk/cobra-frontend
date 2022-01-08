@@ -59,7 +59,7 @@ export default class UserStore extends BaseStore<UserType> {
 
   setProfileData(data: GetProfileResponseData): void {
     runInAction(() => {
-      this.user = convertUserData(data)
+      Object.assign(this.user, convertUserData(data))
     })
   }
 

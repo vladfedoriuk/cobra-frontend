@@ -75,7 +75,9 @@ export default abstract class BaseApi {
              * status code that falls out of the range of 2xx
              */
 
-            onBadResponse(error.response.data)
+            if (error.response.status < 500) {
+              onBadResponse(error.response.data)
+            }
           } else if (error.request && onBadRequest != null) {
             /*
              * The request was made but no response was received, `error.request`

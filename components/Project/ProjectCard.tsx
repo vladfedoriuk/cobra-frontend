@@ -45,16 +45,20 @@ const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
         <Typography variant="h6" component="div" sx={{ mb: 1 }}>
           Roles:
         </Typography>
-        <Stack direction="row" spacing={1}>
-          {isCreator && <Chip label="creator" color="success" />}
-          {membershipRole !== '' && (
-            <Chip
-              label={membershipRole}
-              color={membershipRole == 'maintainer' ? 'success' : 'info'}
-              variant="outlined"
-            />
-          )}
-        </Stack>
+        {isCreator || membershipRole !== '' ? (
+          <Stack direction="row" spacing={1}>
+            {isCreator && <Chip label="creator" color="success" />}
+            {membershipRole !== '' && (
+              <Chip
+                label={membershipRole}
+                color={membershipRole == 'maintainer' ? 'success' : 'info'}
+                variant="outlined"
+              />
+            )}
+          </Stack>
+        ) : (
+          <Chip label="no role" color="error" variant="outlined" />
+        )}
         <Typography sx={{ mb: 1.5, mt: 1 }} variant="h6" component="div">
           Members:
         </Typography>
@@ -63,7 +67,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
             component="div"
             variant="body1"
             color="text.secondary"
-            sx={{ m: 1.75, textAlign: 'center' }}
+            sx={{ m: 2, textAlign: 'center' }}
           >
             No members yet.
           </Typography>
