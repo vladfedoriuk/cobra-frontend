@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { Project as ProjectData } from '@typings/projectStore'
 import { fullNameToInitials } from '@utils/common'
+import Router from 'next/router'
 import React from 'react'
 
 type ProjectCardProps = {
@@ -19,7 +20,7 @@ type ProjectCardProps = {
 
 const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
   const {
-    project: { title, isCreator, membershipRole, creator, members },
+    project: { slug, title, isCreator, membershipRole, creator, members },
   } = props
   return (
     <Card sx={{ minWidth: 300, borderRadius: 4 }} elevation={8}>
@@ -82,7 +83,14 @@ const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
         )}
       </CardContent>
       <CardActions disableSpacing>
-        <Button fullWidth variant="contained" color="success">
+        <Button
+          fullWidth
+          variant="contained"
+          color="success"
+          onClick={() => {
+            Router.push(`/project/${creator?.username}/${slug}/`)
+          }}
+        >
           Open
         </Button>
       </CardActions>

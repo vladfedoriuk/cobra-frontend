@@ -1,4 +1,4 @@
-import { GenericErrorsData, IDMixin } from '@typings/utils'
+import { GenericErrorsData, IDMixin, UserRole } from '@typings/utils'
 
 export type ProjectUserData = IDMixin & {
   username: string
@@ -32,3 +32,12 @@ export type GetProjectResponseData = Pick<
 >
 
 export type GetProjectErrorsData = GenericErrorsData
+
+export type GetProjectMembershipsResponseData = Array<
+  IDMixin & {
+    role: UserRole
+    user: ProjectUserData
+  }
+>
+
+export type GetProjectMembershipsErrorsData = GenericErrorsData

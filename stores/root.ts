@@ -58,23 +58,18 @@ export const fetchInitialStoresData = async (
 ): Promise<InitialStoresData> => {
   // You can do anything to fetch initial store state
 
-  // const userApi = new UserApi()
-  // let profileData = null
+  const userApi = new UserApi()
+  let profileData = null
 
-  // if (await userApi.isAuthenticated(ctx)) {
-  //   await UserApi.withErrorsHandling(
-  //     userApi
-  //       .getProfile(ctx)
-  //       .then(({ data }) => (profileData = convertUserData(data)))
-  //   )
-  // }
-  // return {
-  //   user: { user: profileData },
-  //   snackbars: null,
-  //   projects: null,
-  // }
+  if (await userApi.isAuthenticated(ctx)) {
+    await UserApi.withErrorsHandling(
+      userApi
+        .getProfile(ctx)
+        .then(({ data }) => (profileData = convertUserData(data)))
+    )
+  }
   return {
-    user: null,
+    user: { user: profileData },
     snackbars: null,
     projects: null,
   }

@@ -2,13 +2,17 @@ import {
   ProjectUserData,
   GetProjectsResponseData,
   ProjectData,
+  GetProjectResponseData,
+  GetProjectMembershipsResponseData,
 } from '@typings/projectApi'
 import {
   ProjectUser as ProjectUserType,
   Project as ProjectType,
+  ProjectInfo,
+  ProjectMemberships,
 } from '@typings/projectStore'
 
-export const transformrProjectUser = (
+export const transformProjectUser = (
   userData: ProjectUserData
 ): ProjectUserType => {
   const { id, username, full_name } = userData
@@ -39,9 +43,37 @@ export const transformProjectData = (projectData: ProjectData): ProjectType => {
     slug,
     isCreator: is_creator,
     membershipRole: membership_role,
-    creator: transformrProjectUser(creator),
+    creator: transformProjectUser(creator),
     members: members.map((member) => {
-      return transformrProjectUser(member)
+      return transformProjectUser(member)
     }),
   }
+}
+
+export const transformProjectInfoData = (
+  projectInfoData: GetProjectResponseData
+): ProjectInfo => {
+  const { id, title, description, is_creator, membership_role, creator } =
+    projectInfoData
+  return {
+    id,
+    title,
+    description,
+    creator: transformProjectUser(creator),
+    isCreator: is_creator,
+    membershipRole: membership_role,
+  }
+}
+
+export const transformProjectMembershipsData = (
+  projectIMembershipsData: GetProjectMembershipsResponseData
+): ProjectMemberships => {
+  return projectIMembershipsData.map((projectMembership) => {
+    const { id, role, user } = projectMembership
+    return {
+      id,
+      role,
+      user: transformProjectUser(user),
+    }
+  })
 }

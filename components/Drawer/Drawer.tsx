@@ -35,7 +35,6 @@ const MyDrawer: React.FC = ({ children }) => {
   const theme = useTheme()
   const [drawerOpen, setDrowerOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const handleDrawerOpen = () => {
     setDrowerOpen(true)
@@ -54,6 +53,8 @@ const MyDrawer: React.FC = ({ children }) => {
   }
 
   const { user: userStore } = useMobXStores()
+  const [isAuthenticated, setIsAuthenticated] = useState(userStore?.isLoggedIn)
+
   useEffect(() => {
     userStore
       .isAuthenticated()

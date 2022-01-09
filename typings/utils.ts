@@ -26,3 +26,11 @@ export type GenericErrorsData =
       [k: string]: string | string[]
     }
   | string[]
+
+export enum UserRole {
+  developer,
+  maintainer,
+}
+
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never

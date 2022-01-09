@@ -11,6 +11,8 @@ import {
   CreateProjectResponseData,
   GetProjectErrorsData,
   GetProjectResponseData,
+  GetProjectMembershipsErrorsData,
+  GetProjectMembershipsResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -39,6 +41,26 @@ export default class ProjectStore extends BaseStore<ProjectType> {
     this.projects = transformProjectsData(projectData)
   }
 
+  async getProjectMemberships(
+    id: number,
+    onSuccess: (data: GetProjectMembershipsResponseData) => void = null,
+    onBadResponse: (data: GetProjectMembershipsErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProjectMembershipsResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getProjectMemberships(id)
+        .then((response: AxiosResponse<GetProjectMembershipsResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
   async getProjects(
     onSuccess: (data: GetProjectsResponseData) => void = null,
     onBadResponse: (data: GetProjectsErrorsData) => void = null,
@@ -60,6 +82,7 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       onBadRequest
     )
   }
+
   async getProject(
     username: string,
     slug: string,

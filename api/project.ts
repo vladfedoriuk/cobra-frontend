@@ -1,6 +1,7 @@
 import {
   CreateProjectRequestData,
   CreateProjectResponseData,
+  GetProjectMembershipsResponseData,
   GetProjectResponseData,
   GetProjectsResponseData,
 } from '@typings/projectApi'
@@ -34,6 +35,20 @@ export default class ProjectApi extends BaseApi {
 
     return this.get<GetProjectResponseData>(
       `project/${username}/${slug}/?expand=${expand_params}&fields=${fields_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  getProjectMemberships(
+    id: number,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetProjectMembershipsResponseData>> {
+    const fields_params = 'user,role,id'
+    const expand_params = 'user'
+    return this.get<GetProjectMembershipsResponseData>(
+      `projects/${id}/memberships/?expand=${expand_params}&fields=${fields_params}`,
       {
         headers: { ...this.authenticationHeaders(ctx) },
       }

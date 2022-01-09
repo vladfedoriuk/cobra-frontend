@@ -26,11 +26,7 @@ import {
   PatchProfileErrorData,
   PatchProfileRequestData,
 } from '@typings/userApi'
-import {
-  authenticateUser,
-  getAccessToken,
-  unauthenticateUser,
-} from '@utils/cookies'
+import { authenticateUser, unauthenticateUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { NextContext } from '@typings/utils'
 import { convertUserData } from '@utils/user'
@@ -54,6 +50,7 @@ export default class UserStore extends BaseStore<UserType> {
       getProfile: action.bound,
       login: action.bound,
       logout: action.bound,
+      isAuthenticated: action.bound,
     })
   }
 
@@ -64,7 +61,12 @@ export default class UserStore extends BaseStore<UserType> {
   }
 
   async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
-    return await this.api.isAuthenticated(ctx)
+    return await this.api.isAuthenticated(ctx).then((isAuthenticated) => {
+      runInAction(() => {
+        this.isLoggedIn = isAuthenticated
+      })
+      return isAuthenticated
+    })
   }
 
   get isUserEmpty(): boolean {

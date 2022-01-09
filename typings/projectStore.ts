@@ -1,4 +1,4 @@
-import { IDMixin } from '@typings/utils'
+import { IDMixin, UserRole } from '@typings/utils'
 
 export type ProjectUser = IDMixin & {
   username: string
@@ -13,3 +13,15 @@ export type Project = IDMixin & {
   creator: ProjectUser
   members: Array<ProjectUser>
 }
+
+export type ProjectInfo = Pick<
+  Project,
+  'title' | 'description' | 'creator' | 'id' | 'isCreator' | 'membershipRole'
+>
+
+export type ProjectMemberships = Array<
+  IDMixin & {
+    role: UserRole
+    user: ProjectUser
+  }
+>
