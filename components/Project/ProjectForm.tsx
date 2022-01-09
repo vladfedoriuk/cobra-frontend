@@ -27,11 +27,11 @@ const schema = yup
   })
   .required()
 
-type AddProjectFormProps = {
+type ProjectFormProps = {
   onSuccess: (data: CreateProjectResponseData) => void
 }
 
-const ProjectForm: React.FC<AddProjectFormProps> = ({
+const ProjectForm: React.FC<ProjectFormProps> = ({
   onSuccess,
 }): React.ReactElement => {
   const { projects: projectsStore, snackbars: snackbarStore } = useMobXStores()

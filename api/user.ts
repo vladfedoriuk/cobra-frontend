@@ -3,6 +3,7 @@ import {
   ActivateRequestData,
   ActivateResponseData,
   GetProfileResponseData,
+  GetUsersResponseData,
   LoginRequestData,
   LoginResponseData,
   PasswordResetConfirmRequestData,
@@ -48,6 +49,14 @@ export default class UserApi extends BaseApi {
     ctx: NextContext['ctx'] = null
   ): Promise<AxiosResponse<GetProfileResponseData>> {
     return this.get<GetProfileResponseData>('auth/me/', {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
+  }
+
+  getUsers(
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetUsersResponseData>> {
+    return this.get<GetUsersResponseData>('users/', {
       headers: { ...this.authenticationHeaders(ctx) },
     })
   }

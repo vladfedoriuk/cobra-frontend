@@ -25,6 +25,8 @@ import {
   PatchProfileResponseData,
   PatchProfileErrorData,
   PatchProfileRequestData,
+  GetUsersErrorsData,
+  GetUsersResponseData,
 } from '@typings/userApi'
 import { authenticateUser, unauthenticateUser } from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
@@ -51,13 +53,20 @@ export default class UserStore extends BaseStore<UserType> {
       login: action.bound,
       logout: action.bound,
       isAuthenticated: action.bound,
+      getUsers: action.bound,
+      passwordReset: action.bound,
+      passwordResetConfirm: action.bound,
+      resendActivation: action.bound,
+      register: action.bound,
     })
   }
 
   logout(): void {
-    unauthenticateUser({})
-    this.resetProfileData()
-    this.isLoggedIn = false
+    runInAction(() => {
+      unauthenticateUser({})
+      this.resetProfileData()
+      this.isLoggedIn = false
+    })
   }
 
   async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
@@ -80,7 +89,9 @@ export default class UserStore extends BaseStore<UserType> {
   }
 
   resetProfileData(): void {
-    this.user = {} as UserType
+    runInAction(() => {
+      this.user = {} as UserType
+    })
   }
 
   async patchProfile(
@@ -99,6 +110,25 @@ export default class UserStore extends BaseStore<UserType> {
             onSuccess(response.data)
           }
           this.setProfileData(response.data)
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getUsers(
+    onSuccess: (data: GetUsersResponseData) => void = null,
+    onBadResponse: (data: GetUsersErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetUsersResponseData | void> {
+    return await UserApi.withErrorsHandling(
+      this.api
+        .getUsers()
+        .then((response: AxiosResponse<GetUsersResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
           return response.data
         }),
       onBadResponse,

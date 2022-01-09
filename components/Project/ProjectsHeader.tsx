@@ -24,6 +24,9 @@ const ProjectsHeader: React.FC = (): React.ReactElement => {
 
   const onSuccessfulCreate = () => {
     handleCloseProjectModal()
+    snackbarStore.push(
+      snackbar('The new project has been created successfully', 'success')
+    )
     projectsStore.getProjects(
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},

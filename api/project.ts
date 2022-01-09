@@ -1,4 +1,6 @@
 import {
+  CreateProjectInvitationRequestData,
+  CreateProjectInvitationResponseData,
   CreateProjectRequestData,
   CreateProjectResponseData,
   GetProjectMembershipsResponseData,
@@ -35,6 +37,25 @@ export default class ProjectApi extends BaseApi {
 
     return this.get<GetProjectResponseData>(
       `project/${username}/${slug}/?expand=${expand_params}&fields=${fields_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  createInvitation(
+    id: number,
+    createInvitationData: CreateProjectInvitationRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<CreateProjectInvitationResponseData>> {
+    const expand_params = 'project,user,inviter'
+    const omit_params = 'created,modified'
+    return this.post<
+      CreateProjectInvitationResponseData,
+      CreateProjectInvitationRequestData
+    >(
+      `projects/${id}/invitations/?expand=${expand_params}&omit=${omit_params}`,
+      createInvitationData,
       {
         headers: { ...this.authenticationHeaders(ctx) },
       }

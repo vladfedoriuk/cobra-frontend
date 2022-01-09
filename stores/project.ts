@@ -13,6 +13,9 @@ import {
   GetProjectResponseData,
   GetProjectMembershipsErrorsData,
   GetProjectMembershipsResponseData,
+  CreateProjectInvitationErrorsData,
+  CreateProjectInvitationRequestData,
+  CreateProjectInvitationResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -30,6 +33,9 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       getProjects: action.bound,
       areProjectsEmpty: computed,
       setProjectsData: action.bound,
+      getProjectMemberships: action.bound,
+      getProject: action.bound,
+      createProject: action.bound,
     })
   }
 
@@ -38,7 +44,9 @@ export default class ProjectStore extends BaseStore<ProjectType> {
   }
 
   setProjectsData(projectData: GetProjectsResponseData): void {
-    this.projects = transformProjectsData(projectData)
+    runInAction(() => {
+      this.projects = transformProjectsData(projectData)
+    })
   }
 
   async getProjectMemberships(
@@ -73,9 +81,7 @@ export default class ProjectStore extends BaseStore<ProjectType> {
           if (onSuccess !== null) {
             onSuccess(response.data)
           }
-          runInAction(() => {
-            this.setProjectsData(response.data)
-          })
+          this.setProjectsData(response.data)
           return response.data
         }),
       onBadResponse,
@@ -99,6 +105,30 @@ export default class ProjectStore extends BaseStore<ProjectType> {
           }
           return response.data
         }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+  async createInvitation(
+    id: number,
+    createInvitationData: CreateProjectInvitationRequestData,
+    onSuccess: (data: CreateProjectInvitationResponseData) => void = null,
+    onBadResponse: (data: CreateProjectInvitationErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<CreateProjectInvitationRequestData>
+    ) => void = null
+  ): Promise<CreateProjectInvitationResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .createInvitation(id, createInvitationData)
+        .then(
+          (response: AxiosResponse<CreateProjectInvitationResponseData>) => {
+            if (onSuccess !== null) {
+              onSuccess(response.data)
+            }
+            return response.data
+          }
+        ),
       onBadResponse,
       onBadRequest
     )

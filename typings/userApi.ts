@@ -83,3 +83,12 @@ export type PatchProfileRequestData = RegisterData & IDMixin
 export type PatchProfileErrorData = GenericErrorsData
 
 export type PatchProfileResponseData = RegisterData & IDMixin
+
+export type GetUsersResponseData = Array<{
+  id: number
+  full_name: string
+  email: string
+  username: string
+}>
+
+export type GetUsersErrorsData = GenericErrorsData

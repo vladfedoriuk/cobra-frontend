@@ -41,3 +41,20 @@ export type GetProjectMembershipsResponseData = Array<
 >
 
 export type GetProjectMembershipsErrorsData = GenericErrorsData
+
+export type CreateProjectInvitationRequestData = {
+  email: string
+}
+
+export type CreateProjectInvitationResponseData = {
+  id: string
+  is_active: boolean
+  status: string
+  project: IDMixin & {
+    title: string
+  }
+  user: ProjectUserData
+  inviter: ProjectUserData
+}
+
+export type CreateProjectInvitationErrorsData = GenericErrorsData

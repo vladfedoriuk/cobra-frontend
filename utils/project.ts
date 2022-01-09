@@ -19,6 +19,12 @@ export const transformProjectUser = (
   return { id, username, fullName: full_name }
 }
 
+export const transformProjectUsers = (
+  usersData: Array<ProjectUserData>
+): Array<ProjectUserType> => {
+  return usersData.map((userData) => transformProjectUser(userData))
+}
+
 export const transformProjectsData = (
   projectsData: GetProjectsResponseData
 ): Array<ProjectType> => {
@@ -77,3 +83,8 @@ export const transformProjectMembershipsData = (
     }
   })
 }
+
+export const isProjectCreatorOrMaintainer = (
+  isCreator: boolean,
+  membershipRole: string
+): boolean => isCreator || membershipRole === 'maintainer'

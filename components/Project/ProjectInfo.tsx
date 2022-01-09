@@ -3,7 +3,7 @@ import {
   ProjectInfo as ProjectInfoData,
   ProjectMemberships,
 } from '@typings/projectStore'
-import React from 'react'
+import React, { useState } from 'react'
 import Divider from '@mui/material/Divider'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
@@ -18,6 +18,17 @@ import { FixedSizeList } from 'react-window'
 import Box from '@mui/system/Box'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Chip from '@mui/material/Chip'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import { isProjectCreatorOrMaintainer } from '@utils/project'
+import useMobXStores from '@hooks/stores'
+import { snackbar } from '@typings/snackbarStore'
+import { observer } from 'mobx-react-lite'
+import Modal from '@components/Modal'
+import InvitationForm from './InvitationForm'
+import { CreateProjectInvitationResponseData } from '@typings/projectApi'
 
 type ProjectInfoProps = {
   project: ProjectInfoData
@@ -30,7 +41,6 @@ const renderRow = (props): React.ReactElement => {
     role,
     user: { fullName, username },
   } = data[index]
-
   return (
     <ListItem key={index} style={style} component="div" disablePadding>
       <ListItemAvatar>
@@ -65,6 +75,7 @@ const renderRow = (props): React.ReactElement => {
                 variant="outlined"
                 sx={{
                   mt: 1,
+                  width: '100px',
                 }}
               />
             </Box>
@@ -77,68 +88,144 @@ const renderRow = (props): React.ReactElement => {
 
 const ProjectInfo: React.FC<ProjectInfoProps> = (props): React.ReactElement => {
   const {
-    project: { title, description, creator },
+    project: { id, title, description, creator, isCreator, membershipRole },
     memberships,
   } = props
+
+  const { snackbars: snackbarStore } = useMobXStores()
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  const [openSendInvitationModal, setOpenSendInvitationModal] = useState(false)
+
+  const handleOpenSendInvitationModal = () => {
+    setOpenSendInvitationModal(true)
+  }
+
+  const handleCloseSendInvitationModal = () => {
+    setOpenSendInvitationModal(false)
+  }
+
+  const onSuccessfulSend = (data: CreateProjectInvitationResponseData) => {
+    const {
+      user: { full_name },
+      project: { title },
+    } = data
+    handleCloseSendInvitationModal()
+    snackbarStore.push(
+      snackbar(
+        `The invitation email has been sent to a user ${full_name} to join ${title}`,
+        'success'
+      )
+    )
+  }
+
   return (
-    <Card sx={{ minWidth: 300, borderRadius: 2 }} elevation={6}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: 'success.main' }} aria-label="creator">
-            {fullNameToInitials(creator?.fullName)}
-          </Avatar>
-        }
-        title={creator?.fullName}
-        subheader={creator?.username}
-        titleTypographyProps={{
-          variant: 'subtitle1',
-          component: 'div',
-          color: 'text.secondary',
-        }}
-        action={
-          <IconButton aria-label="actions">
-            <MoreVertIcon />
-          </IconButton>
-        }
-      />
-      <Divider light />
-      <CardContent>
-        <Typography variant="h4" component="div" sx={{ mb: 2 }}>
-          {title}
-        </Typography>
-        <Divider sx={{ m: 1 }} light />
-        <Typography variant="body1" color="text.secondary">
-          {description}
-        </Typography>
-        <Divider sx={{ m: 1 }} light />
-        {memberships && (
-          <Box
-            sx={{
-              m: 1,
-              width: '100%',
-              height: 300,
-              maxWidth: 'sm',
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Typography variant="h6" component="div" sx={{ mb: 2 }}>
-              Memberships
-            </Typography>
-            <FixedSizeList
-              height={400}
-              width={360}
-              itemSize={50}
-              itemCount={memberships?.length ?? 0}
-              overscanCount={5}
-              itemData={memberships}
+    <>
+      <Card sx={{ minWidth: '400px', borderRadius: 2 }} elevation={6}>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: 'success.main' }} aria-label="creator">
+              {fullNameToInitials(creator?.fullName)}
+            </Avatar>
+          }
+          title={creator?.fullName}
+          subheader={creator?.username}
+          titleTypographyProps={{
+            variant: 'subtitle1',
+            component: 'div',
+            color: 'text.secondary',
+          }}
+          action={
+            isProjectCreatorOrMaintainer(isCreator, membershipRole) ? (
+              <Box sx={{ flexGrow: 0 }}>
+                <IconButton aria-label="actions" onClick={handleMenu}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      handleClose()
+                      handleOpenSendInvitationModal()
+                    }}
+                  >
+                    <ListItemIcon>
+                      <AddCircleOutlineIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Invite a user</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            ) : null
+          }
+        />
+        <Divider light />
+        <CardContent>
+          <Typography variant="h4" component="div" sx={{ mb: 2 }}>
+            {title}
+          </Typography>
+          <Divider sx={{ m: 1 }} light />
+          <Typography variant="body1" color="text.secondary">
+            {description}
+          </Typography>
+          <Divider sx={{ m: 1 }} light />
+          {memberships && (
+            <Box
+              sx={{
+                m: 1,
+                width: '100%',
+                height: 300,
+                maxWidth: 'sm',
+                bgcolor: 'background.paper',
+              }}
             >
-              {renderRow}
-            </FixedSizeList>
-          </Box>
-        )}
-      </CardContent>
-    </Card>
+              <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                Memberships
+              </Typography>
+              <FixedSizeList
+                height={300}
+                width={360}
+                itemSize={50}
+                itemCount={memberships?.length ?? 0}
+                overscanCount={5}
+                itemData={memberships}
+              >
+                {renderRow}
+              </FixedSizeList>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+      <Modal
+        title="Invite a user"
+        open={openSendInvitationModal}
+        onClose={handleCloseSendInvitationModal}
+      >
+        <InvitationForm onSuccess={onSuccessfulSend} projectId={id} />
+      </Modal>
+    </>
   )
 }
 
-export default ProjectInfo
+export default observer(ProjectInfo)

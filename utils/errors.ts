@@ -23,6 +23,27 @@ export const handleFieldsErrors = <
   })
 }
 
+export const handleProjectInvitationErrors = <ResponseErrorsDataType>(
+  responseErrorsData: ResponseErrorsDataType,
+  onDetailError: (detail: string) => void = null
+): void => {
+  handleSingleKeyError(
+    responseErrorsData,
+    'pending_invitation_already_exists',
+    onDetailError
+  )
+  handleSingleKeyError(
+    responseErrorsData,
+    'user_is_already_a_member',
+    onDetailError
+  )
+  handleSingleKeyError(
+    responseErrorsData,
+    'inviter_is_not_a_maintainer_or_a_creator',
+    onDetailError
+  )
+}
+
 export const handleDetailError = <ResponseErrorsDataType>(
   responseErrorsData: ResponseErrorsDataType,
   onDetailError: (detail: string) => void = null
