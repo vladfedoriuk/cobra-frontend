@@ -21,7 +21,6 @@ import useMobXStores from '@hooks/stores'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Router from 'next/router'
-import { unauthenticateUser } from '@utils/cookies'
 import { observer } from 'mobx-react-lite'
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
@@ -59,7 +58,7 @@ const MyDrawer: React.FC = ({ children }) => {
     userStore
       .isAuthenticated()
       .then((isAuthenticated) => setIsAuthenticated(isAuthenticated))
-  }, [isAuthenticated, userStore?.user])
+  }, [isAuthenticated, userStore?.isLoggedIn])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -81,7 +80,7 @@ const MyDrawer: React.FC = ({ children }) => {
             Cobra
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          {!userStore?.isUserEmpty && isAuthenticated && (
+          {(userStore?.isLoggedIn || isAuthenticated) && (
             <Box sx={{ flexGrow: 0 }}>
               <IconButton
                 size="large"
@@ -136,9 +135,7 @@ const MyDrawer: React.FC = ({ children }) => {
           <ListItem
             button
             onClick={() => {
-              if (!isAuthenticated) {
-                unauthenticateUser({})
-                userStore?.resetProfileData()
+              if (!isAuthenticated || !userStore?.isLoggedIn) {
                 Router.push('/login')
               }
               Router.push('/projects')
@@ -155,16 +152,19 @@ const MyDrawer: React.FC = ({ children }) => {
           <ListItem
             button
             onClick={() => {
-              if (isAuthenticated || userStore?.isUserEmpty) {
-                unauthenticateUser({})
-                userStore?.resetProfileData()
+              if (isAuthenticated || !userStore?.isLoggedIn) {
+                userStore?.logout()
                 setIsAuthenticated(false)
               }
               Router.push('/login')
             }}
           >
             <ListItemIcon>
-              {!isAuthenticated ? <LoginIcon /> : <LogoutIcon />}
+              {!isAuthenticated || !userStore.isLoggedIn ? (
+                <LoginIcon />
+              ) : (
+                <LogoutIcon />
+              )}
             </ListItemIcon>
             <ListItemText primary={!isAuthenticated ? 'Login' : 'Logout'} />
           </ListItem>

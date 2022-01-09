@@ -26,7 +26,11 @@ import {
   PatchProfileErrorData,
   PatchProfileRequestData,
 } from '@typings/userApi'
-import { authenticateUser } from '@utils/cookies'
+import {
+  authenticateUser,
+  getAccessToken,
+  unauthenticateUser,
+} from '@utils/cookies'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { NextContext } from '@typings/utils'
 import { convertUserData } from '@utils/user'
@@ -34,6 +38,7 @@ import { convertUserData } from '@utils/user'
 export default class UserStore extends BaseStore<UserType> {
   user: UserType = {} as UserType
   api: UserApi = null
+  isLoggedIn = false
 
   constructor(rootStore: Readonly<RootStore>) {
     super(rootStore)
@@ -41,12 +46,21 @@ export default class UserStore extends BaseStore<UserType> {
     makeObservable(this, {
       hydrate: action.bound,
       user: observable,
+      isLoggedIn: observable,
       setProfileData: action.bound,
       resetProfileData: action.bound,
       isUserEmpty: computed,
       patchProfile: action.bound,
       getProfile: action.bound,
+      login: action.bound,
+      logout: action.bound,
     })
+  }
+
+  logout(): void {
+    unauthenticateUser({})
+    this.resetProfileData()
+    this.isLoggedIn = false
   }
 
   async isAuthenticated(ctx: NextContext['ctx'] = null): Promise<boolean> {
@@ -211,6 +225,7 @@ export default class UserStore extends BaseStore<UserType> {
         .login(loginData)
         .then((response: AxiosResponse<LoginResponseData>) => {
           authenticateUser(response.data)
+          this.isLoggedIn = true
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

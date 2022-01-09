@@ -1,13 +1,7 @@
-import useMobXStores from '@hooks/stores'
-import { observer } from 'mobx-react-lite'
 import Head from 'next/head'
 import Image from 'next/image'
 
 export const Home = (): JSX.Element => {
-  const { user: userStore } = useMobXStores()
-  // eslint-disable-next-line no-console
-  console.log(userStore.user.email)
-
   return (
     <div className="container">
       <Head>
@@ -223,4 +217,4 @@ export const Home = (): JSX.Element => {
   )
 }
 
-export default observer(Home)
+export default Home
