@@ -61,3 +61,10 @@ export type ProjectIssue = IDMixin & {
 }
 
 export type ProjectIssues = Array<ProjectIssue>
+
+export type Epic = IDMixin & {
+  title: string
+  description: string
+  project: Pick<Project, 'id' | 'title' | 'slug' | 'creator'>
+  creator: ProjectUser
+}

@@ -182,7 +182,10 @@ const ProjectInfo: React.FC<ProjectInfoProps> = (props): React.ReactElement => {
         />
         <Divider light />
         <CardContent>
-          <Typography variant="h4" component="div" sx={{ mb: 2 }}>
+          <Typography variant="body1" component="div" color="text.secondary">
+            Project
+          </Typography>
+          <Typography variant="h6" component="div" sx={{ mb: 2 }}>
             {title}
           </Typography>
           {description && (

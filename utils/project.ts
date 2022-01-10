@@ -7,6 +7,7 @@ import {
   GetProjectInvitationResponseData,
   GetProjectEpicsResponseData,
   GetProjectIssuesResponseData,
+  GetEpicDetailResponseData,
 } from '@typings/projectApi'
 import {
   ProjectUser as ProjectUserType,
@@ -17,6 +18,7 @@ import {
   ProjectEpics,
   ProjectIssues,
   ProjectIssue,
+  Epic,
 } from '@typings/projectStore'
 import { ArrayElement } from '@typings/utils'
 
@@ -27,6 +29,33 @@ export const transformProjectEpics = (
     const { id, title, creator } = projectEpicData
     return { id, title, creator: transformProjectUser(creator) }
   })
+}
+
+export const transformEpic = (epicData: GetEpicDetailResponseData): Epic => {
+  const {
+    id,
+    title,
+    description,
+    project: {
+      id: projectId,
+      title: projectTitle,
+      slug,
+      creator: projectCreator,
+    },
+    creator,
+  } = epicData
+  return {
+    id,
+    title,
+    description,
+    project: {
+      id: projectId,
+      title: projectTitle,
+      slug,
+      creator: transformProjectUser(projectCreator),
+    },
+    creator: transformProjectUser(creator),
+  }
 }
 
 const transformProjectIssue = (

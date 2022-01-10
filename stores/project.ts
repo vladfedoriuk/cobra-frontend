@@ -28,6 +28,10 @@ import {
   GetProjectEpicsResponseData,
   GetProjectIssuesErrorsData,
   GetProjectIssuesResponseData,
+  GetEpicDetailErrorsData,
+  GetEpicDetailResponseData,
+  GetEpicIssuesErrorsData,
+  GetEpicIssuesResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -237,6 +241,7 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       onBadRequest
     )
   }
+
   async getProjectIssues(
     id: number,
     onSuccess: (data: GetProjectIssuesResponseData) => void = null,
@@ -247,6 +252,46 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       this.api
         .getProjectIssues(id)
         .then((response: AxiosResponse<GetProjectIssuesResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getEpicIssues(
+    id: number,
+    onSuccess: (data: GetEpicIssuesResponseData) => void = null,
+    onBadResponse: (data: GetEpicIssuesErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetEpicIssuesResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getEpicIssues(id)
+        .then((response: AxiosResponse<GetEpicIssuesResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getEpicDetails(
+    id: number,
+    onSuccess: (data: GetEpicDetailResponseData) => void = null,
+    onBadResponse: (data: GetEpicDetailErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetEpicDetailResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getEpicDetails(id)
+        .then((response: AxiosResponse<GetEpicDetailResponseData>) => {
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

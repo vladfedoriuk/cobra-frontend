@@ -5,6 +5,8 @@ import {
   CreateProjectInvitationResponseData,
   CreateProjectRequestData,
   CreateProjectResponseData,
+  GetEpicDetailResponseData,
+  GetEpicIssuesResponseData,
   GetProjectEpicsResponseData,
   GetProjectInvitationResponseData,
   GetProjectIssuesResponseData,
@@ -160,6 +162,34 @@ export default class ProjectApi extends BaseApi {
     const expand_params = 'creator,assignee,parent,epic'
     return this.get<GetProjectIssuesResponseData>(
       `projects/${id}/issues/?expand=${expand_params}&fields=${fields_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  getEpicIssues(
+    id: number,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetEpicIssuesResponseData>> {
+    const fields_params = 'id,title,creator,status,type,assignee,parent,epic'
+    const expand_params = 'creator,assignee,parent,epic'
+    return this.get<GetEpicIssuesResponseData>(
+      `issue/?epic=${id}&expand=${expand_params}&fields=${fields_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  getEpicDetails(
+    id: number,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetEpicDetailResponseData>> {
+    const omit_params = 'created,modified'
+    const expand_params = 'project.creator,creator'
+    return this.get<GetEpicDetailResponseData>(
+      `epic/${id}/?expand=${expand_params}&omit=${omit_params}`,
       {
         headers: { ...this.authenticationHeaders(ctx) },
       }

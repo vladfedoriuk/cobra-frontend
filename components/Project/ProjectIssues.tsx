@@ -32,12 +32,14 @@ import {
 import CircleIcon from '@mui/icons-material/Circle'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { IssueType } from '@typings/utils'
+import Router from 'next/router'
+import { ListChildComponentProps } from 'react-window'
 
 type ProjectInfoProps = {
   project: ProjectInfoData
 }
 
-type ColorType =
+export type ColorType =
   | 'secondary'
   | 'primary'
   | 'success'
@@ -48,7 +50,7 @@ type ColorType =
   | 'info'
   | 'warning'
 
-type ChipColorType =
+export type ChipColorType =
   | 'secondary'
   | 'primary'
   | 'success'
@@ -59,23 +61,26 @@ type ChipColorType =
 
 type TabOptions = IssueType | 'epic'
 
-const bulletColotMap = new Map<TabOptions, ColorType>([
+export const bulletColotMap = new Map<TabOptions, ColorType>([
   ['epic', 'secondary'],
   ['task', 'primary'],
   ['user-story', 'success'],
   ['bug', 'error'],
 ])
 
-const statusChipColorMap = new Map<IssueStatusType, ChipColorType>([
+export const statusChipColorMap = new Map<IssueStatusType, ChipColorType>([
   ['new', 'secondary'],
   ['in-progress', 'primary'],
   ['closed', 'info'],
   ['release-ready', 'success'],
 ])
 
-const renderEpic = (props): React.ReactElement => {
+export const renderEpic = (
+  props: ListChildComponentProps
+): React.ReactElement => {
   const { index, style, data } = props
   const {
+    id,
     title,
     creator: { fullName, username },
   } = data[index]
@@ -86,7 +91,13 @@ const renderEpic = (props): React.ReactElement => {
       component="div"
       disablePadding
       secondaryAction={
-        <IconButton edge="end" aria-label="delete">
+        <IconButton
+          edge="end"
+          aria-label="see"
+          onClick={() => {
+            Router.push(`/epic/${id}`)
+          }}
+        >
           <VisibilityIcon />
         </IconButton>
       }
@@ -115,7 +126,9 @@ const renderEpic = (props): React.ReactElement => {
   )
 }
 
-const renderIssue = (props): React.ReactElement => {
+export const renderIssue = (
+  props: ListChildComponentProps
+): React.ReactElement => {
   const { index, style, data } = props
   const {
     title,
@@ -144,9 +157,9 @@ const renderIssue = (props): React.ReactElement => {
         justifyContent="center"
         alignItems="center"
         divider={<Divider flexItem orientation="vertical" />}
-        spacing={2}
+        spacing={1}
       >
-        <Typography component="div" variant="body2" sx={{ width: '200px' }}>
+        <Typography component="div" variant="body2" sx={{ width: '175px' }}>
           {title}
           <Typography component="div" variant="body2">
             {fullName}
@@ -161,11 +174,12 @@ const renderIssue = (props): React.ReactElement => {
         </Typography>
 
         <Chip
+          sx={{ width: '100px' }}
           label={status}
           color={statusChipColorMap.get(status)}
           variant="outlined"
         />
-        <Typography component="div" variant="body2" sx={{ width: '200px' }}>
+        <Typography component="div" variant="body2" sx={{ width: '175px' }}>
           Assignee
           {assignee ? (
             <Typography component="div" variant="body2">
@@ -233,6 +247,11 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
         setTasksData(filterIssuesByType(issues, 'task'))
         setBugsData(filterIssuesByType(issues, 'bug'))
         setUserStoriesData(filterIssuesByType(issues, 'user-story'))
+      },
+      () => {
+        snackbarStore.push(
+          snackbar('Cannot fetch the project issues. Try again later.', 'error')
+        )
       },
       commonOnBadRequest
     )

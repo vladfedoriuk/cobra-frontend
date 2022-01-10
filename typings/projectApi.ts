@@ -104,3 +104,16 @@ type ProjectIssueData = IDMixin & {
 export type GetProjectIssuesResponseData = Array<ProjectIssueData>
 
 export type GetProjectIssuesErrorsData = GenericErrorsData
+
+export type GetEpicDetailResponseData = IDMixin & {
+  title: string
+  description: string
+  project: Pick<ProjectData, 'id' | 'title' | 'slug' | 'creator'>
+  creator: ProjectUserData
+}
+
+export type GetEpicDetailErrorsData = GenericErrorsData
+
+export type GetEpicIssuesResponseData = Array<ProjectIssueData>
+
+export type GetEpicIssuesErrorsData = GenericErrorsData
