@@ -4,19 +4,82 @@ import {
   ProjectData,
   GetProjectResponseData,
   GetProjectMembershipsResponseData,
+  GetProjectInvitationResponseData,
+  GetProjectEpicsResponseData,
+  GetProjectIssuesResponseData,
 } from '@typings/projectApi'
 import {
   ProjectUser as ProjectUserType,
   Project as ProjectType,
   ProjectInfo,
   ProjectMemberships,
+  ProjectInvitation as ProjectInvitationType,
+  ProjectEpics,
+  ProjectIssues,
+  ProjectIssue,
 } from '@typings/projectStore'
+import { ArrayElement } from '@typings/utils'
+
+export const transformProjectEpics = (
+  projectEpicsData: GetProjectEpicsResponseData
+): ProjectEpics => {
+  return projectEpicsData.map((projectEpicData) => {
+    const { id, title, creator } = projectEpicData
+    return { id, title, creator: transformProjectUser(creator) }
+  })
+}
+
+const transformProjectIssue = (
+  projectIssueData: ArrayElement<GetProjectIssuesResponseData>
+): ProjectIssue => {
+  const { id, title, status, type, assignee, parent, epic, creator } =
+    projectIssueData
+  return {
+    id,
+    title,
+    status,
+    type,
+    assignee: assignee !== null ? transformProjectUser(assignee) : null,
+    parent: parent !== null ? { id: parent?.id, title: parent?.title } : null,
+    epic: epic !== null ? { id: epic?.id, title: epic?.title } : null,
+    creator: transformProjectUser(creator),
+  }
+}
+
+export const filterIssuesByType = (
+  issues: ProjectIssues,
+  expectedType: string
+): ProjectIssues => {
+  return issues.filter(({ type }) => expectedType === type)
+}
+
+export const transformProjectIssues = (
+  projectIssuesData: GetProjectIssuesResponseData
+): ProjectIssues => {
+  return projectIssuesData.map((projectIssueData) =>
+    transformProjectIssue(projectIssueData)
+  )
+}
 
 export const transformProjectUser = (
   userData: ProjectUserData
 ): ProjectUserType => {
   const { id, username, full_name } = userData
   return { id, username, fullName: full_name }
+}
+
+export const transformProjectInvitation = (
+  invitationData: GetProjectInvitationResponseData
+): ProjectInvitationType => {
+  const { id, is_active, status, project, user, inviter } = invitationData
+  return {
+    id,
+    isActive: is_active,
+    status,
+    project,
+    user: transformProjectUser(user),
+    inviter: transformProjectUser(inviter),
+  }
 }
 
 export const transformProjectUsers = (

@@ -1,11 +1,18 @@
 import {
+  AcceptProjecInvitationRequestData,
+  AcceptProjecInvitationResponseData,
   CreateProjectInvitationRequestData,
   CreateProjectInvitationResponseData,
   CreateProjectRequestData,
   CreateProjectResponseData,
+  GetProjectEpicsResponseData,
+  GetProjectInvitationResponseData,
+  GetProjectIssuesResponseData,
   GetProjectMembershipsResponseData,
   GetProjectResponseData,
   GetProjectsResponseData,
+  RejectProjecInvitationRequestData,
+  RejectProjecInvitationResponseData,
 } from '@typings/projectApi'
 import { NextContext } from '@typings/utils'
 import { AxiosResponse } from 'axios'
@@ -85,6 +92,74 @@ export default class ProjectApi extends BaseApi {
     return this.post<CreateProjectResponseData, CreateProjectRequestData>(
       `projects/?expand=${expand_params}&omit=${omit_params}`,
       createProjectData,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  acceptInvitation(
+    id: string,
+    acceptInvitationData: AcceptProjecInvitationRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<AcceptProjecInvitationResponseData>> {
+    return this.post<
+      AcceptProjecInvitationResponseData,
+      AcceptProjecInvitationRequestData
+    >(`invitation/${id}/accept/`, acceptInvitationData, {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
+  }
+
+  rejectInvitation(
+    id: string,
+    rejectInvitationData: RejectProjecInvitationRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<RejectProjecInvitationResponseData>> {
+    return this.post<
+      RejectProjecInvitationResponseData,
+      RejectProjecInvitationRequestData
+    >(`invitation/${id}/reject/`, rejectInvitationData, {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
+  }
+
+  getInvitation(
+    id: string,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetProjectInvitationResponseData>> {
+    const expand_params = 'project,user,inviter'
+    const omit_params = 'created,modified'
+    return this.get<GetProjectInvitationResponseData>(
+      `invitation/${id}/?expand=${expand_params}&omit=${omit_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  getProjectEpics(
+    id: number,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetProjectEpicsResponseData>> {
+    const fields_params = 'id,title,creator'
+    const expand_params = 'creator'
+    return this.get<GetProjectEpicsResponseData>(
+      `projects/${id}/epics/?expand=${expand_params}&fields=${fields_params}`,
+      {
+        headers: { ...this.authenticationHeaders(ctx) },
+      }
+    )
+  }
+
+  getProjectIssues(
+    id: number,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<GetProjectIssuesResponseData>> {
+    const fields_params = 'id,title,creator,status,type,assignee,parent,epic'
+    const expand_params = 'creator,assignee,parent,epic'
+    return this.get<GetProjectIssuesResponseData>(
+      `projects/${id}/issues/?expand=${expand_params}&fields=${fields_params}`,
       {
         headers: { ...this.authenticationHeaders(ctx) },
       }

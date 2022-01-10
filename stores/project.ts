@@ -16,6 +16,18 @@ import {
   CreateProjectInvitationErrorsData,
   CreateProjectInvitationRequestData,
   CreateProjectInvitationResponseData,
+  AcceptProjecInvitationRequestData,
+  AcceptProjecInvitationResponseData,
+  AcceptProjectInvitationErrorsData,
+  RejectProjecInvitationRequestData,
+  RejectProjecInvitationResponseData,
+  RejectProjectInvitationErrorsData,
+  GetProjectInvitationErrorsData,
+  GetProjectInvitationResponseData,
+  GetProjectEpicsErrorsData,
+  GetProjectEpicsResponseData,
+  GetProjectIssuesErrorsData,
+  GetProjectIssuesResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -36,6 +48,11 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       getProjectMemberships: action.bound,
       getProject: action.bound,
       createProject: action.bound,
+      acceptInvitation: action.bound,
+      rejectInvitation: action.bound,
+      createInvitation: action.bound,
+      getInvitation: action.bound,
+      getProjectEpics: action.bound,
     })
   }
 
@@ -109,6 +126,7 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       onBadRequest
     )
   }
+
   async createInvitation(
     id: number,
     createInvitationData: CreateProjectInvitationRequestData,
@@ -129,6 +147,111 @@ export default class ProjectStore extends BaseStore<ProjectType> {
             return response.data
           }
         ),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async acceptInvitation(
+    id: string,
+    acceptInvitationData: AcceptProjecInvitationRequestData,
+    onSuccess: (data: AcceptProjecInvitationResponseData) => void = null,
+    onBadResponse: (data: AcceptProjectInvitationErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<AcceptProjecInvitationRequestData>
+    ) => void = null
+  ): Promise<AcceptProjecInvitationResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .acceptInvitation(id, acceptInvitationData)
+        .then((response: AxiosResponse<AcceptProjecInvitationResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async rejectInvitation(
+    id: string,
+    rejectInvitationData: RejectProjecInvitationRequestData,
+    onSuccess: (data: RejectProjecInvitationResponseData) => void = null,
+    onBadResponse: (data: RejectProjectInvitationErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<RejectProjecInvitationRequestData>
+    ) => void = null
+  ): Promise<RejectProjecInvitationResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .rejectInvitation(id, rejectInvitationData)
+        .then((response: AxiosResponse<RejectProjecInvitationResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getInvitation(
+    id: string,
+    onSuccess: (data: GetProjectInvitationResponseData) => void = null,
+    onBadResponse: (data: GetProjectInvitationErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProjectInvitationResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getInvitation(id)
+        .then((response: AxiosResponse<GetProjectInvitationResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getProjectEpics(
+    id: number,
+    onSuccess: (data: GetProjectEpicsResponseData) => void = null,
+    onBadResponse: (data: GetProjectEpicsErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProjectEpicsResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getProjectEpics(id)
+        .then((response: AxiosResponse<GetProjectEpicsResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+  async getProjectIssues(
+    id: number,
+    onSuccess: (data: GetProjectIssuesResponseData) => void = null,
+    onBadResponse: (data: GetProjectIssuesErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetProjectIssuesResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getProjectIssues(id)
+        .then((response: AxiosResponse<GetProjectIssuesResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
       onBadResponse,
       onBadRequest
     )

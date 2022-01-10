@@ -123,7 +123,7 @@ const InvitationForm: React.FC<InvitationFormProps> = ({
             <Autocomplete
               {...props}
               options={userOptions}
-              getOptionLabel={({ email }) => email}
+              getOptionLabel={({ fullName }) => fullName}
               renderOption={(props, option) => (
                 <Typography {...props}>
                   {`${option.fullName} (${option.username})`}

@@ -257,7 +257,9 @@ export default class UserStore extends BaseStore<UserType> {
         .login(loginData)
         .then((response: AxiosResponse<LoginResponseData>) => {
           authenticateUser(response.data)
-          this.isLoggedIn = true
+          runInAction(() => {
+            this.isLoggedIn = true
+          })
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

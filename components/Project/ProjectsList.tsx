@@ -18,10 +18,9 @@ const ProjectsList: React.FC<ProjectsListProps> = (
         flexDirection: 'row',
         justifyContent: 'flex-start',
         flexWrap: 'wrap',
-        p: 1,
-        m: 1,
+        mt: 2,
         bgcolor: 'background.paper',
-        '& .MuiCard-root': { m: 2 },
+        '& .MuiCard-root': { mr: 2, mb: 2 },
       }}
     >
       {projects.map((project) => (

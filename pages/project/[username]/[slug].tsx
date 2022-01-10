@@ -1,6 +1,7 @@
 import ProjectApi from '@api/project'
 import UserApi from '@api/user'
 import ProjectInfo from '@components/Project/ProjectInfo'
+import ProjectIssues from '@components/Project/ProjectIssues'
 import useMobXStores from '@hooks/stores'
 import Grid from '@mui/material/Grid'
 import { GetProjectResponseData } from '@typings/projectApi'
@@ -65,7 +66,10 @@ const Project: React.FC<ProjectProps> = ({
   }, [])
   return (
     <Grid container spacing={2}>
-      <Grid item xs={4}>
+      <Grid item xs={12} sm={6} md={8}>
+        <ProjectIssues project={data} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
         <ProjectInfo project={data} memberships={projectMemberships} />
       </Grid>
     </Grid>
@@ -83,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!isAuthenticated) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/login',
         permanent: false,
       },
     }
@@ -91,32 +95,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let response: AxiosResponse<GetProjectResponseData> = null
   const snackbars = []
-  if (isAuthenticated) {
-    try {
-      response = await projectApi.getProject(
-        username as string,
-        slug as string,
-        context
-      )
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        response = e.response
-        if (e?.response) {
-          snackbars.push(
-            snackbar(
-              'Failed to load a project. ' +
-                'Please check the link and your access rights to the project',
-              'error'
-            )
+  try {
+    response = await projectApi.getProject(
+      username as string,
+      slug as string,
+      context
+    )
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      response = e.response
+      if (e?.response) {
+        snackbars.push(
+          snackbar(
+            'Failed to load a project. ' +
+              'Please check the link and your access rights to the project',
+            'error'
           )
-        } else {
-          snackbars.push(
-            snackbar(
-              'Cannot conect to the server. Please, verify your connection.',
-              'error'
-            )
+        )
+      } else {
+        snackbars.push(
+          snackbar(
+            'Cannot conect to the server. Please, verify your connection.',
+            'error'
           )
-        }
+        )
       }
     }
   }

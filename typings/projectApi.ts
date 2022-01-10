@@ -1,4 +1,11 @@
-import { GenericErrorsData, IDMixin, UserRole } from '@typings/utils'
+import {
+  ArrayElement,
+  GenericErrorsData,
+  IDMixin,
+  IssueStatusType,
+  IssueType,
+  UserRole,
+} from '@typings/utils'
 
 export type ProjectUserData = IDMixin & {
   username: string
@@ -9,7 +16,7 @@ export type ProjectData = IDMixin & {
   description: string
   slug: string
   is_creator: boolean
-  membership_role: string
+  membership_role: UserRole
   creator: ProjectUserData
   members: Array<ProjectUserData>
 }
@@ -58,3 +65,42 @@ export type CreateProjectInvitationResponseData = {
 }
 
 export type CreateProjectInvitationErrorsData = GenericErrorsData
+
+export type AcceptProjecInvitationRequestData = Record<string, unknown>
+
+export type AcceptProjecInvitationResponseData = Record<string, unknown>
+
+export type AcceptProjectInvitationErrorsData = GenericErrorsData
+
+export type RejectProjecInvitationRequestData = Record<string, unknown>
+
+export type RejectProjecInvitationResponseData = Record<string, unknown>
+
+export type RejectProjectInvitationErrorsData = GenericErrorsData
+
+export type GetProjectInvitationResponseData =
+  CreateProjectInvitationResponseData
+
+export type GetProjectInvitationErrorsData = GenericErrorsData
+
+export type GetProjectEpicsResponseData = Array<
+  IDMixin & {
+    title: string
+    creator: ProjectUserData
+  }
+>
+
+export type GetProjectEpicsErrorsData = GenericErrorsData
+
+type ProjectIssueData = IDMixin & {
+  status: IssueStatusType
+  type: IssueType
+  title: string
+  creator: ProjectUserData
+  assignee: ProjectUserData | null
+  parent: Pick<ProjectIssueData, 'title' | 'id'> | null
+  epic: Pick<ArrayElement<GetProjectEpicsResponseData>, 'title' | 'id'> | null
+}
+export type GetProjectIssuesResponseData = Array<ProjectIssueData>
+
+export type GetProjectIssuesErrorsData = GenericErrorsData

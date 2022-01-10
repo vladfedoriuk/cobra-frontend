@@ -40,10 +40,10 @@ const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
       />
       <Divider light />
       <CardContent>
-        <Typography variant="h4" component="div" sx={{ mb: 2 }}>
+        <Typography variant="h6" component="div" sx={{ mb: 2 }}>
           {title}
         </Typography>
-        <Typography variant="h6" component="div" sx={{ mb: 1 }}>
+        <Typography variant="body1" component="div" sx={{ mb: 1 }}>
           Roles:
         </Typography>
         {isCreator || membershipRole !== '' ? (
@@ -60,7 +60,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props): React.ReactElement => {
         ) : (
           <Chip label="no role" color="error" variant="outlined" />
         )}
-        <Typography sx={{ mb: 1.5, mt: 1 }} variant="h6" component="div">
+        <Typography sx={{ mb: 1.5, mt: 1 }} variant="body1" component="div">
           Members:
         </Typography>
         {members?.length === 0 ? (

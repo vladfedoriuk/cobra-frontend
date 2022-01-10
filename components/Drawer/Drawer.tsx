@@ -22,6 +22,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Router from 'next/router'
 import { observer } from 'mobx-react-lite'
+import Container from '@mui/material/Container'
 
 export const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -171,9 +172,20 @@ const MyDrawer: React.FC = ({ children }) => {
           </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}> */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          height: '100vh',
+          overflow: 'auto',
+        }}
+      >
         <DrawerHeader />
-        {children}
+        <Container maxWidth="lg" sx={{ mb: 4 }}>
+          {children}
+        </Container>
       </Box>
     </Box>
   )

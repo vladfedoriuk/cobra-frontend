@@ -14,7 +14,6 @@ import IconButton from '@mui/material/IconButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
-import { FixedSizeList } from 'react-window'
 import Box from '@mui/system/Box'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Chip from '@mui/material/Chip'
@@ -29,6 +28,7 @@ import { observer } from 'mobx-react-lite'
 import Modal from '@components/Modal'
 import InvitationForm from './InvitationForm'
 import { CreateProjectInvitationResponseData } from '@typings/projectApi'
+import List from './List'
 
 type ProjectInfoProps = {
   project: ProjectInfoData
@@ -185,35 +185,31 @@ const ProjectInfo: React.FC<ProjectInfoProps> = (props): React.ReactElement => {
           <Typography variant="h4" component="div" sx={{ mb: 2 }}>
             {title}
           </Typography>
-          <Divider sx={{ m: 1 }} light />
-          <Typography variant="body1" color="text.secondary">
-            {description}
-          </Typography>
-          <Divider sx={{ m: 1 }} light />
-          {memberships && (
-            <Box
-              sx={{
-                m: 1,
-                width: '100%',
-                height: 300,
-                maxWidth: 'sm',
-                bgcolor: 'background.paper',
-              }}
-            >
+          {description && (
+            <>
+              <Divider sx={{ m: 1 }} light />
+              <Typography variant="body1" color="text.secondary">
+                {description}
+              </Typography>
+            </>
+          )}
+          {memberships?.length !== 0 && (
+            <>
+              <Divider sx={{ m: 1 }} light />
               <Typography variant="h6" component="div" sx={{ mb: 2 }}>
                 Memberships
               </Typography>
-              <FixedSizeList
+              <List
                 height={300}
                 width={360}
                 itemSize={50}
                 itemCount={memberships?.length ?? 0}
                 overscanCount={5}
                 itemData={memberships}
-              >
-                {renderRow}
-              </FixedSizeList>
-            </Box>
+                boxSx={{ maxWidth: 'sm' }}
+                renderRow={renderRow}
+              />
+            </>
           )}
         </CardContent>
       </Card>
