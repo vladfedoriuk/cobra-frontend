@@ -15,7 +15,7 @@ export type Project = IDMixin & {
   description: string
   slug: string
   isCreator: boolean
-  membershipRole: UserRole
+  membershipRole: UserRole | ''
   creator: ProjectUser
   members: Array<ProjectUser>
 }
