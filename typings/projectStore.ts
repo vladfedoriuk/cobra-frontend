@@ -63,6 +63,7 @@ export type ProjectIssue = IDMixin & {
 export type Issue = ProjectIssue & {
   project: Pick<Project, 'id' | 'title' | 'slug' | 'creator'>
   description: string
+  estimate: number
 }
 
 export type ProjectIssues = Array<ProjectIssue>

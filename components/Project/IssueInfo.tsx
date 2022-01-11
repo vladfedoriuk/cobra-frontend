@@ -20,6 +20,7 @@ import MenuItem from '@mui/material/MenuItem'
 import CircleIcon from '@mui/icons-material/Circle'
 import { bulletColorMap, statusChipColorMap } from './ProjectIssues'
 import Chip from '@mui/material/Chip'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 type IssueInfoProps = {
   issue: IssueType
@@ -32,6 +33,7 @@ const IssueInfo: React.FC<IssueInfoProps> = (props): React.ReactElement => {
       description,
       type,
       status,
+      estimate,
       creator: { fullName, username },
       project: {
         title: projectTitle,
@@ -137,6 +139,16 @@ const IssueInfo: React.FC<IssueInfoProps> = (props): React.ReactElement => {
             >
               {projectTitle}
             </Link>
+          </Typography>
+        </Stack>
+        <Divider sx={{ m: 1 }} light />
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+          Time Estimate
+        </Typography>
+        <Stack direction="row" spacing={1} justifyContent="flex-start">
+          <AccessTimeIcon />
+          <Typography variant="body1" color="text.secondary">
+            {`${estimate} h.`}
           </Typography>
         </Stack>
         {description && (

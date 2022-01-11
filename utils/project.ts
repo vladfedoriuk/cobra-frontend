@@ -81,7 +81,7 @@ export const transformProjectIssue = (
 
 export const transformIssue = (issueData: IssueDetailData): Issue => {
   const preprocessedIssueData = transformProjectIssue(issueData)
-  const { project, description } = issueData
+  const { project, description, estimate } = issueData
   return {
     ...preprocessedIssueData,
     project: {
@@ -91,6 +91,7 @@ export const transformIssue = (issueData: IssueDetailData): Issue => {
       creator: transformProjectUser(project.creator),
     },
     description,
+    estimate,
   }
 }
 

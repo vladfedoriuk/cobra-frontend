@@ -122,6 +122,7 @@ export type GetEpicIssuesErrorsData = GenericErrorsData
 export type IssueDetailData = ProjectIssueData & {
   project: Pick<ProjectData, 'id' | 'title' | 'slug' | 'creator'>
   description: string
+  estimate: number
 }
 
 export type GetIssueDetailResponseData = IssueDetailData

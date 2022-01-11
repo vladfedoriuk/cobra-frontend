@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { styled, useTheme } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -35,7 +35,7 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
 const MyDrawer: React.FC = ({ children }) => {
   const theme = useTheme()
   const [drawerOpen, setDrowerOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleDrawerOpen = () => {
     setDrowerOpen(true)
@@ -54,13 +54,6 @@ const MyDrawer: React.FC = ({ children }) => {
   }
 
   const { user: userStore } = useMobXStores()
-  const [isAuthenticated, setIsAuthenticated] = useState(userStore?.isLoggedIn)
-
-  useEffect(() => {
-    userStore
-      .isAuthenticated()
-      .then((isAuthenticated) => setIsAuthenticated(isAuthenticated))
-  }, [isAuthenticated, userStore?.isLoggedIn])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -82,7 +75,7 @@ const MyDrawer: React.FC = ({ children }) => {
             Cobra
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          {(userStore?.isLoggedIn || isAuthenticated) && (
+          {userStore?.isLoggedIn && (
             <Box sx={{ flexGrow: 0 }}>
               <IconButton
                 size="large"
@@ -137,7 +130,7 @@ const MyDrawer: React.FC = ({ children }) => {
           <ListItem
             button
             onClick={() => {
-              if (!isAuthenticated || !userStore?.isLoggedIn) {
+              if (!userStore?.isLoggedIn) {
                 Router.push('/login')
               }
               Router.push('/projects')
@@ -154,25 +147,21 @@ const MyDrawer: React.FC = ({ children }) => {
           <ListItem
             button
             onClick={() => {
-              if (isAuthenticated || !userStore?.isLoggedIn) {
+              if (userStore?.isLoggedIn) {
                 userStore?.logout()
-                setIsAuthenticated(false)
               }
               Router.push('/login')
             }}
           >
             <ListItemIcon>
-              {!isAuthenticated || !userStore.isLoggedIn ? (
-                <LoginIcon />
-              ) : (
-                <LogoutIcon />
-              )}
+              {!userStore.isLoggedIn ? <LoginIcon /> : <LogoutIcon />}
             </ListItemIcon>
-            <ListItemText primary={!isAuthenticated ? 'Login' : 'Logout'} />
+            <ListItemText
+              primary={!userStore?.isLoggedIn ? 'Login' : 'Logout'}
+            />
           </ListItem>
         </List>
       </Drawer>
-      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}> */}
       <Box
         component="main"
         sx={{
