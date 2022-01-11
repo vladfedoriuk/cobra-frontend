@@ -6,4 +6,5 @@ export const validateResponse = (response: AxiosResponse<any>): boolean =>
 export const isTokenInvalidResponse = (error: AxiosError<any>): boolean =>
   error?.response?.data?.code === 'token_not_valid' ||
   error?.response?.data?.detail?.code === 'token_not_valid' ||
-  'token_not_valid' in error?.response?.data
+  (typeof error?.response?.data === 'object' &&
+    'token_not_valid' in (error?.response?.data ?? {}))

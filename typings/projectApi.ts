@@ -92,15 +92,16 @@ export type GetProjectEpicsResponseData = Array<
 
 export type GetProjectEpicsErrorsData = GenericErrorsData
 
-type ProjectIssueData = IDMixin & {
+export type ProjectIssueData = IDMixin & {
   status: IssueStatusType
   type: IssueType
   title: string
   creator: ProjectUserData
   assignee: ProjectUserData | null
-  parent: Pick<ProjectIssueData, 'title' | 'id'> | null
+  parent: Pick<ProjectIssueData, 'title' | 'id' | 'type'> | null
   epic: Pick<ArrayElement<GetProjectEpicsResponseData>, 'title' | 'id'> | null
 }
+
 export type GetProjectIssuesResponseData = Array<ProjectIssueData>
 
 export type GetProjectIssuesErrorsData = GenericErrorsData
@@ -117,3 +118,16 @@ export type GetEpicDetailErrorsData = GenericErrorsData
 export type GetEpicIssuesResponseData = Array<ProjectIssueData>
 
 export type GetEpicIssuesErrorsData = GenericErrorsData
+
+export type IssueDetailData = ProjectIssueData & {
+  project: Pick<ProjectData, 'id' | 'title' | 'slug' | 'creator'>
+  description: string
+}
+
+export type GetIssueDetailResponseData = IssueDetailData
+
+export type GetIssueDetailErrorsData = GenericErrorsData
+
+export type GetIssueSubIssuesResponseData = Array<ProjectIssueData>
+
+export type GetIssueSubIssuesErrorsData = GenericErrorsData

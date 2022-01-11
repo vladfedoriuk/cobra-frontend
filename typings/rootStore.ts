@@ -11,7 +11,7 @@ export type RootStoreMapValues =
   | typeof ProjectStore
 
 export type InitialStoresData = Partial<{
-  user: { user: UserType | null } | null
+  user: { user: UserType | null; isLoggedIn: boolean } | null
   snackbars: Record<string, unknown> | null
   projects: { projects: ProjectData | null } | null
 }>

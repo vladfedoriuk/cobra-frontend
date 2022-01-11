@@ -61,7 +61,7 @@ export type ChipColorType =
 
 type TabOptions = IssueType | 'epic'
 
-export const bulletColotMap = new Map<TabOptions, ColorType>([
+export const bulletColorMap = new Map<TabOptions, ColorType>([
   ['epic', 'secondary'],
   ['task', 'primary'],
   ['user-story', 'success'],
@@ -103,7 +103,7 @@ export const renderEpic = (
       }
     >
       <ListItemIcon>
-        <CircleIcon color={bulletColotMap.get('epic')} />
+        <CircleIcon color={bulletColorMap.get('epic')} />
       </ListItemIcon>
       <ListItemText
         primary={title}
@@ -131,6 +131,7 @@ export const renderIssue = (
 ): React.ReactElement => {
   const { index, style, data } = props
   const {
+    id,
     title,
     status,
     type,
@@ -144,13 +145,19 @@ export const renderIssue = (
       component="div"
       disablePadding
       secondaryAction={
-        <IconButton edge="end" aria-label="delete">
+        <IconButton
+          edge="end"
+          aria-label="see"
+          onClick={() => {
+            Router.push(`/issue/${id}`)
+          }}
+        >
           <VisibilityIcon />
         </IconButton>
       }
     >
       <ListItemIcon>
-        <CircleIcon color={bulletColotMap.get(type)} />
+        <CircleIcon color={bulletColorMap.get(type)} />
       </ListItemIcon>
       <Stack
         direction="row"

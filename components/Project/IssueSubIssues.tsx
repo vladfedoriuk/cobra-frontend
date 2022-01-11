@@ -1,4 +1,4 @@
-import { Epic } from '@typings/projectStore'
+import { Issue as IssueType } from '@typings/projectStore'
 import React, { useEffect, useState } from 'react'
 import Divider from '@mui/material/Divider'
 import Card from '@mui/material/Card'
@@ -13,13 +13,15 @@ import List from './List'
 import { renderIssue } from './ProjectIssues'
 import Typography from '@mui/material/Typography'
 
-type EpicIssuesProps = {
-  epic: Epic
+type IssueSubIssuesProps = {
+  issue: IssueType
 }
 
-const EpicIssues: React.FC<EpicIssuesProps> = (props): React.ReactElement => {
+const IssueSubIssues: React.FC<IssueSubIssuesProps> = (
+  props
+): React.ReactElement => {
   const {
-    epic: { id },
+    issue: { id },
   } = props
   const { projects: projectsStore, snackbars: snackbarStore } = useMobXStores()
 
@@ -35,14 +37,17 @@ const EpicIssues: React.FC<EpicIssuesProps> = (props): React.ReactElement => {
   }
 
   useEffect(() => {
-    projectsStore?.getEpicIssues(
+    projectsStore?.getIssueSubIssues(
       id,
       (data) => {
         setIssuesData(transformProjectIssues(data))
       },
       () => {
         snackbarStore.push(
-          snackbar('Cannot fetch the epic issues. Try again later.', 'error')
+          snackbar(
+            'Cannot fetch the issue sub-issues. Try again later.',
+            'error'
+          )
         )
       },
       commonOnBadRequest
@@ -80,4 +85,4 @@ const EpicIssues: React.FC<EpicIssuesProps> = (props): React.ReactElement => {
   )
 }
 
-export default observer(EpicIssues)
+export default observer(IssueSubIssues)

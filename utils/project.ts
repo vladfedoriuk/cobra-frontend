@@ -6,8 +6,9 @@ import {
   GetProjectMembershipsResponseData,
   GetProjectInvitationResponseData,
   GetProjectEpicsResponseData,
-  GetProjectIssuesResponseData,
   GetEpicDetailResponseData,
+  IssueDetailData,
+  ProjectIssueData,
 } from '@typings/projectApi'
 import {
   ProjectUser as ProjectUserType,
@@ -19,8 +20,8 @@ import {
   ProjectIssues,
   ProjectIssue,
   Epic,
+  Issue,
 } from '@typings/projectStore'
-import { ArrayElement } from '@typings/utils'
 
 export const transformProjectEpics = (
   projectEpicsData: GetProjectEpicsResponseData
@@ -58,8 +59,8 @@ export const transformEpic = (epicData: GetEpicDetailResponseData): Epic => {
   }
 }
 
-const transformProjectIssue = (
-  projectIssueData: ArrayElement<GetProjectIssuesResponseData>
+export const transformProjectIssue = (
+  projectIssueData: ProjectIssueData
 ): ProjectIssue => {
   const { id, title, status, type, assignee, parent, epic, creator } =
     projectIssueData
@@ -69,9 +70,27 @@ const transformProjectIssue = (
     status,
     type,
     assignee: assignee !== null ? transformProjectUser(assignee) : null,
-    parent: parent !== null ? { id: parent?.id, title: parent?.title } : null,
+    parent:
+      parent !== null
+        ? { id: parent?.id, title: parent?.title, type: parent?.type }
+        : null,
     epic: epic !== null ? { id: epic?.id, title: epic?.title } : null,
     creator: transformProjectUser(creator),
+  }
+}
+
+export const transformIssue = (issueData: IssueDetailData): Issue => {
+  const preprocessedIssueData = transformProjectIssue(issueData)
+  const { project, description } = issueData
+  return {
+    ...preprocessedIssueData,
+    project: {
+      id: project.id,
+      title: project.title,
+      slug: project.slug,
+      creator: transformProjectUser(project.creator),
+    },
+    description,
   }
 }
 
@@ -83,7 +102,7 @@ export const filterIssuesByType = (
 }
 
 export const transformProjectIssues = (
-  projectIssuesData: GetProjectIssuesResponseData
+  projectIssuesData: Array<ProjectIssueData>
 ): ProjectIssues => {
   return projectIssuesData.map((projectIssueData) =>
     transformProjectIssue(projectIssueData)

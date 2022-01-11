@@ -56,8 +56,13 @@ export type ProjectIssue = IDMixin & {
   title: string
   creator: ProjectUser
   assignee: ProjectUser | null
-  parent: Pick<ProjectIssue, 'title' | 'id'> | null
+  parent: Pick<ProjectIssue, 'title' | 'id' | 'type'> | null
   epic: Pick<ArrayElement<ProjectEpics>, 'title' | 'id'> | null
+}
+
+export type Issue = ProjectIssue & {
+  project: Pick<Project, 'id' | 'title' | 'slug' | 'creator'>
+  description: string
 }
 
 export type ProjectIssues = Array<ProjectIssue>

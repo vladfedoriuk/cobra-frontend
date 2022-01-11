@@ -11,6 +11,8 @@ import theme from '@styles/theme'
 import CssBaseline from '@mui/material/CssBaseline'
 import { SnackBarProvider } from '@providers/snackbar'
 import { DrawerProvider } from '@providers/drawer'
+import { getJWTTokens, setAccessToken, setRefreshToken } from '@utils/cookies'
+import isServer from '@utils/isServer'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -18,9 +20,11 @@ class MyApp extends App<MyAppProps> {
   static async getInitialProps(appContext: AppContext): Promise<any> {
     const initialStoresData = await fetchInitialStoresData(appContext.ctx)
     const appProps = await App.getInitialProps(appContext)
+    const [access, refresh] = getJWTTokens({ ctx: appContext.ctx })
     return {
       ...appProps,
       initialStoresData,
+      jwtTokens: [access, refresh],
     }
   }
 
@@ -29,12 +33,28 @@ class MyApp extends App<MyAppProps> {
       Component,
       pageProps,
       initialStoresData,
+      jwtTokens,
       emotionCache = clientSideEmotionCache,
     } = this.props
     const hydrationData = {
       ...initialStoresData,
       ...pageProps.hydrationData,
     }
+
+    if (!isServer) {
+      const [clientAccess, clientRefresh] = getJWTTokens({})
+      const [serverAccess, serverRefresh] = jwtTokens
+      if (
+        serverAccess &&
+        serverRefresh &&
+        hydrationData?.user?.isLoggedIn &&
+        (serverAccess !== clientAccess || serverRefresh !== clientRefresh)
+      ) {
+        setAccessToken({ access: serverAccess })
+        setRefreshToken({ refresh: serverRefresh })
+      }
+    }
+
     return (
       <CacheProvider value={emotionCache}>
         <Head>

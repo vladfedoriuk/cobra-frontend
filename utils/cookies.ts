@@ -100,6 +100,12 @@ export const getRefreshToken = ({
     ctx,
   })
 
+export const getJWTTokens = ({
+  ctx,
+}: NextContext): Array<string | undefined | null> => {
+  return [getAccessToken({ ctx }), getRefreshToken({ ctx })]
+}
+
 export const deleteAccessToken = ({ ctx }: NextContext): void => {
   deleteCookie({
     cookieName: JWT_ACCESS_COOKIE_NAME,

@@ -32,6 +32,10 @@ import {
   GetEpicDetailResponseData,
   GetEpicIssuesErrorsData,
   GetEpicIssuesResponseData,
+  GetIssueDetailErrorsData,
+  GetIssueDetailResponseData,
+  GetIssueSubIssuesResponseData,
+  GetIssueSubIssuesErrorsData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -272,6 +276,46 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       this.api
         .getEpicIssues(id)
         .then((response: AxiosResponse<GetEpicIssuesResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getIssueSubIssues(
+    id: number,
+    onSuccess: (data: GetIssueSubIssuesResponseData) => void = null,
+    onBadResponse: (data: GetIssueSubIssuesErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetIssueSubIssuesResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getIssueSubIssues(id)
+        .then((response: AxiosResponse<GetIssueSubIssuesResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async getIssueDetails(
+    id: number,
+    onSuccess: (data: GetIssueDetailResponseData) => void = null,
+    onBadResponse: (data: GetIssueDetailErrorsData) => void = null,
+    onBadRequest: (requestConfig: AxiosRequestConfig) => void = null
+  ): Promise<GetIssueDetailResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .getIssueDetails(id)
+        .then((response: AxiosResponse<GetIssueDetailResponseData>) => {
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

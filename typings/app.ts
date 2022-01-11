@@ -5,4 +5,5 @@ import { EmotionCache } from '@emotion/cache'
 export type MyAppProps = AppProps & {
   initialStoresData: InitialStoresData
   emotionCache: EmotionCache
+  jwtTokens: Array<string>
 }

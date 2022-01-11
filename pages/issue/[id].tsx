@@ -1,26 +1,26 @@
 import ProjectApi from '@api/project'
 import UserApi from '@api/user'
-import { GetEpicDetailResponseData } from '@typings/projectApi'
-import { Epic as EpicType } from '@typings/projectStore'
+import { GetIssueDetailResponseData } from '@typings/projectApi'
+import { Issue as IssueType } from '@typings/projectStore'
 import { snackbar } from '@typings/snackbarStore'
-import { transformEpic } from '@utils/project'
+import { transformIssue } from '@utils/project'
 import { validateResponse } from '@utils/response'
 import axios, { AxiosResponse } from 'axios'
 import { observer } from 'mobx-react-lite'
 import { GetServerSideProps } from 'next'
 import DefaultErrorPage from 'next/error'
 import React from 'react'
-import Grid from '@mui/material/Grid'
-import EpicInfo from '@components/Project/EpicInfo'
-import EpicIssues from '@components/Project/EpicIssues'
+import { Grid } from '@mui/material'
+import IssueInfo from '@components/Project/IssueInfo'
+import IssueSubIssues from '@components/Project/IssueSubIssues'
 
-type EpicProps = {
-  data: EpicType | null
+type IssueProps = {
+  data: IssueType | null
   status: number
   success: boolean
 }
 
-const Epic: React.FC<EpicProps> = ({
+const Issue: React.FC<IssueProps> = ({
   status,
   success,
   data,
@@ -28,20 +28,20 @@ const Epic: React.FC<EpicProps> = ({
   if (!success) {
     return <DefaultErrorPage statusCode={Number(status ?? 500)} />
   }
-
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={6} md={8}>
-        <EpicIssues epic={data} />
+        <IssueSubIssues issue={data} />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <EpicInfo epic={data} />
+        <IssueInfo issue={data} />
       </Grid>
     </Grid>
   )
+  return
 }
 
-export default observer(Epic)
+export default observer(Issue)
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.params
@@ -58,18 +58,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  let response: AxiosResponse<GetEpicDetailResponseData> = null
+  let response: AxiosResponse<GetIssueDetailResponseData> = null
   const snackbars = []
   try {
-    response = await projectApi.getEpicDetails(id as unknown as number, context)
+    response = await projectApi.getIssueDetails(
+      id as unknown as number,
+      context
+    )
   } catch (e) {
     if (axios.isAxiosError(e)) {
       response = e.response
       if (e?.response) {
         snackbars.push(
           snackbar(
-            'Failed to load an epic. ' +
-              'Please check the link and your access rights to the project the epic belongs to.',
+            'Failed to load an issue. ' +
+              'Please check the link and your access rights to the project the issue belongs to.',
             'error'
           )
         )
@@ -83,9 +86,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     }
   }
-  let data: EpicType = null
+  let data: IssueType = null
   if (response?.data && 'id' in response?.data) {
-    data = transformEpic(response?.data)
+    data = transformIssue(response?.data)
   }
   return {
     props: {

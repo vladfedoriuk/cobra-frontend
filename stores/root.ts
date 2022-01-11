@@ -60,8 +60,8 @@ export const fetchInitialStoresData = async (
 
   const userApi = new UserApi()
   let profileData = null
-
-  if (await userApi.isAuthenticated(ctx)) {
+  const isAuthenticated = await userApi.isAuthenticated(ctx)
+  if (isAuthenticated) {
     await UserApi.withErrorsHandling(
       userApi
         .getProfile(ctx)
@@ -69,7 +69,7 @@ export const fetchInitialStoresData = async (
     )
   }
   return {
-    user: { user: profileData },
+    user: { user: profileData, isLoggedIn: isAuthenticated },
     snackbars: null,
     projects: null,
   }
