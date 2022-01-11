@@ -131,3 +131,26 @@ export type GetIssueDetailErrorsData = GenericErrorsData
 export type GetIssueSubIssuesResponseData = Array<ProjectIssueData>
 
 export type GetIssueSubIssuesErrorsData = GenericErrorsData
+
+export type CreateProjectEpicRequestData = {
+  title: string
+  description: string
+}
+
+export type CreateProjectEpicResponseData = GetEpicDetailResponseData
+
+export type CreateProjectEpicErrorsData = GenericErrorsData
+
+export type CreateProjectIssueRequestData = {
+  title: string
+  type: IssueType
+  description?: string
+  estimate: number
+  assignee?: number
+  parent?: number
+  epic?: number
+}
+
+export type CreateProjectIssueResponseData = IssueDetailData
+
+export type CreateProjectIssueErrorsData = GenericErrorsData

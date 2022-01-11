@@ -17,6 +17,8 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import MenuItem from '@mui/material/MenuItem'
+import CircleIcon from '@mui/icons-material/Circle'
+import { bulletColorMap } from './ProjectIssues'
 
 type EpicInfoProps = {
   epic: Epic
@@ -98,12 +100,20 @@ const EpicInfo: React.FC<EpicInfoProps> = (props): React.ReactElement => {
       <Divider light />
       <CardContent>
         <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body1" component="div" color="text.secondary">
-            Epic
-            <Typography variant="h6" component="div" color="text.primary">
-              {title}
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="flex-start"
+            sx={{ flexWrap: 'wrap' }}
+          >
+            <CircleIcon color={bulletColorMap.get('epic')} />
+            <Typography variant="body1" component="div" color="text.secondary">
+              Epic
+              <Typography variant="h6" component="div" color="text.primary">
+                {title}
+              </Typography>
             </Typography>
-          </Typography>
+          </Stack>
 
           <Typography variant="body1" component="div" color="text.secondary">
             Project:{` `}

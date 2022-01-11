@@ -34,6 +34,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import { IssueType } from '@typings/utils'
 import Router from 'next/router'
 import { ListChildComponentProps } from 'react-window'
+import Modal from '@components/Modal'
+import EpicForm from './EpicForm'
+import IssueForm from './IssueForm'
 
 type ProjectInfoProps = {
   project: ProjectInfoData
@@ -217,11 +220,20 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
     project: { id },
   } = props
   const { projects: projectsStore, snackbars: snackbarStore } = useMobXStores()
-  const [value, setValue] = useState<TabOptions>('epic')
+  const [selectedOption, setSelectedOption] = useState<TabOptions>('epic')
   const [epicsData, setEpicsData] = useState<ProjectEpics>([])
   const [tasksData, setTasksData] = useState<ProjectIssuesType>([])
   const [bugsData, setBugsData] = useState<ProjectIssuesType>([])
   const [userStoriesData, setUserStoriesData] = useState<ProjectIssuesType>([])
+  const [openProjectModal, setOpenProjectModal] = useState(false)
+
+  const handleOpenProjectModal = () => {
+    setOpenProjectModal(true)
+  }
+
+  const handleCloseProjectModal = () => {
+    setOpenProjectModal(false)
+  }
 
   const commonOnBadRequest = () => {
     snackbarStore.push(
@@ -229,6 +241,47 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
         'Cannot conect to the server. Please, verify your connection.',
         'error'
       )
+    )
+  }
+
+  const onSuccessfulCreateEpic = () => {
+    handleCloseProjectModal()
+    snackbarStore.push(
+      snackbar('The new epic has been created successfully', 'success')
+    )
+    projectsStore.getProjectEpics(
+      id,
+      (data) => {
+        setEpicsData(transformProjectEpics(data))
+      },
+      () => {
+        snackbarStore.push(
+          snackbar('Cannot fetch the project epics. Try again later.', 'error')
+        )
+      },
+      commonOnBadRequest
+    )
+  }
+
+  const onSuccessfulCreateIssue = () => {
+    handleCloseProjectModal()
+    snackbarStore.push(
+      snackbar('The new issue has been created successfully', 'success')
+    )
+    projectsStore.getProjectIssues(
+      id,
+      (data) => {
+        const issues = transformProjectIssues(data)
+        setTasksData(filterIssuesByType(issues, 'task'))
+        setBugsData(filterIssuesByType(issues, 'bug'))
+        setUserStoriesData(filterIssuesByType(issues, 'user-story'))
+      },
+      () => {
+        snackbarStore.push(
+          snackbar('Cannot fetch the project issues. Try again later.', 'error')
+        )
+      },
+      commonOnBadRequest
     )
   }
 
@@ -245,7 +298,8 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
       },
       commonOnBadRequest
     )
-  }, [])
+  }, [id])
+
   useEffect(() => {
     projectsStore?.getProjectIssues(
       id,
@@ -262,10 +316,10 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
       },
       commonOnBadRequest
     )
-  }, [])
+  }, [id])
 
   const handleChange = (event: React.SyntheticEvent, newValue) => {
-    setValue(newValue)
+    setSelectedOption(newValue)
   }
 
   const getListData = (
@@ -293,16 +347,19 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
     return renderIssue
   }
 
-  const listData = getListData(value)
+  const listData = getListData(selectedOption)
 
-  const addButtonText = value === 'epic' ? 'Add an epic' : 'Add an issue'
+  const addButtonText =
+    selectedOption === 'epic' ? 'Add an epic' : 'Add an issue'
+
+  const formTitle = addButtonText
 
   return (
     <>
       <Card sx={{ minWidth: '400px', borderRadius: 2 }} elevation={6}>
         <CardContent>
           <Tabs
-            value={value}
+            value={selectedOption}
             onChange={handleChange}
             centered
             variant="fullWidth"
@@ -320,7 +377,11 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
             spacing={2}
             sx={{ mt: 4 }}
           >
-            <Button variant="contained" color="success">
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleOpenProjectModal}
+            >
               {addButtonText}
             </Button>
             <List
@@ -329,7 +390,7 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
               itemSize={80}
               itemCount={listData?.length ?? 0}
               overscanCount={5}
-              renderRow={getRenderFunction(value)}
+              renderRow={getRenderFunction(selectedOption)}
               itemData={listData}
               boxSx={{
                 width: 'auto',
@@ -338,6 +399,17 @@ const ProjectIssues: React.FC<ProjectInfoProps> = (
           </Stack>
         </CardContent>
       </Card>
+      <Modal
+        title={formTitle}
+        open={openProjectModal}
+        onClose={handleCloseProjectModal}
+      >
+        {selectedOption == 'epic' ? (
+          <EpicForm onSuccess={onSuccessfulCreateEpic} projectId={id} />
+        ) : (
+          <IssueForm onSuccess={onSuccessfulCreateIssue} projectId={id} />
+        )}
+      </Modal>
     </>
   )
 }

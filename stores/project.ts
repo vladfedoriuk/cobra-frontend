@@ -36,6 +36,12 @@ import {
   GetIssueDetailResponseData,
   GetIssueSubIssuesResponseData,
   GetIssueSubIssuesErrorsData,
+  CreateProjectEpicErrorsData,
+  CreateProjectEpicRequestData,
+  CreateProjectEpicResponseData,
+  CreateProjectIssueErrorsData,
+  CreateProjectIssueRequestData,
+  CreateProjectIssueResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -61,6 +67,12 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       createInvitation: action.bound,
       getInvitation: action.bound,
       getProjectEpics: action.bound,
+      getProjectIssues: action.bound,
+      getIssueSubIssues: action.bound,
+      getIssueDetails: action.bound,
+      getEpicDetails: action.bound,
+      createProjectEpic: action.bound,
+      createProjectIssue: action.bound,
     })
   }
 
@@ -358,6 +370,52 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       this.api
         .createProject(createProjectData)
         .then((response: AxiosResponse<CreateProjectResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async createProjectEpic(
+    id: number,
+    createProjectEpicData: CreateProjectEpicRequestData,
+    onSuccess: (data: CreateProjectEpicResponseData) => void = null,
+    onBadResponse: (data: CreateProjectEpicErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<CreateProjectEpicRequestData>
+    ) => void = null
+  ): Promise<CreateProjectEpicResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .createProjectEpic(id, createProjectEpicData)
+        .then((response: AxiosResponse<CreateProjectEpicResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async createProjectIssue(
+    id: number,
+    createProjectIssueData: CreateProjectIssueRequestData,
+    onSuccess: (data: CreateProjectIssueResponseData) => void = null,
+    onBadResponse: (data: CreateProjectIssueErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<CreateProjectIssueRequestData>
+    ) => void = null
+  ): Promise<CreateProjectIssueResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .createProjectIssue(id, createProjectIssueData)
+        .then((response: AxiosResponse<CreateProjectIssueResponseData>) => {
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

@@ -1,8 +1,12 @@
 import {
   AcceptProjecInvitationRequestData,
   AcceptProjecInvitationResponseData,
+  CreateProjectEpicRequestData,
+  CreateProjectEpicResponseData,
   CreateProjectInvitationRequestData,
   CreateProjectInvitationResponseData,
+  CreateProjectIssueRequestData,
+  CreateProjectIssueResponseData,
   CreateProjectRequestData,
   CreateProjectResponseData,
   GetEpicDetailResponseData,
@@ -224,5 +228,31 @@ export default class ProjectApi extends BaseApi {
         headers: { ...this.authenticationHeaders(ctx) },
       }
     )
+  }
+
+  createProjectEpic(
+    id: number,
+    createProjectEpicData: CreateProjectEpicRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<CreateProjectEpicResponseData>> {
+    return this.post<
+      CreateProjectEpicResponseData,
+      CreateProjectEpicRequestData
+    >(`projects/${id}/epics/`, createProjectEpicData, {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
+  }
+
+  createProjectIssue(
+    id: number,
+    createProjectIssueData: CreateProjectIssueRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<CreateProjectIssueResponseData>> {
+    return this.post<
+      CreateProjectIssueResponseData,
+      CreateProjectIssueRequestData
+    >(`projects/${id}/issues/`, createProjectIssueData, {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
   }
 }
