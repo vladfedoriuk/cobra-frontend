@@ -42,6 +42,9 @@ import {
   CreateProjectIssueErrorsData,
   CreateProjectIssueRequestData,
   CreateProjectIssueResponseData,
+  CreateIssueLoggedTimeErrorsData,
+  CreateIssueLoggedTimeRequestData,
+  CreateIssueLoggedTimeResponseData,
 } from '@typings/projectApi'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { transformProjectsData } from '@utils/project'
@@ -73,6 +76,7 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       getEpicDetails: action.bound,
       createProjectEpic: action.bound,
       createProjectIssue: action.bound,
+      createIssueLoggedTime: action.bound,
     })
   }
 
@@ -416,6 +420,29 @@ export default class ProjectStore extends BaseStore<ProjectType> {
       this.api
         .createProjectIssue(id, createProjectIssueData)
         .then((response: AxiosResponse<CreateProjectIssueResponseData>) => {
+          if (onSuccess !== null) {
+            onSuccess(response.data)
+          }
+          return response.data
+        }),
+      onBadResponse,
+      onBadRequest
+    )
+  }
+
+  async createIssueLoggedTime(
+    id: number,
+    createIssueLoggedTimeData: CreateIssueLoggedTimeRequestData,
+    onSuccess: (data: CreateIssueLoggedTimeResponseData) => void = null,
+    onBadResponse: (data: CreateIssueLoggedTimeErrorsData) => void = null,
+    onBadRequest: (
+      requestConfig: AxiosRequestConfig<CreateIssueLoggedTimeRequestData>
+    ) => void = null
+  ): Promise<CreateIssueLoggedTimeResponseData | void> {
+    return await ProjectApi.withErrorsHandling(
+      this.api
+        .createIssueLoggedTime(id, createIssueLoggedTimeData)
+        .then((response: AxiosResponse<CreateIssueLoggedTimeResponseData>) => {
           if (onSuccess !== null) {
             onSuccess(response.data)
           }

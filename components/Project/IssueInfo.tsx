@@ -21,6 +21,11 @@ import CircleIcon from '@mui/icons-material/Circle'
 import { bulletColorMap, statusChipColorMap } from './ProjectIssues'
 import Chip from '@mui/material/Chip'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import Modal from '@components/Modal'
+import LoggedTimeForm from './LoggedTimeForm'
+import { observer } from 'mobx-react-lite'
+import useMobXStores from '@hooks/stores'
+import { snackbar } from '@typings/snackbarStore'
 
 type IssueInfoProps = {
   issue: IssueType
@@ -29,6 +34,7 @@ type IssueInfoProps = {
 const IssueInfo: React.FC<IssueInfoProps> = (props): React.ReactElement => {
   const {
     issue: {
+      id,
       title,
       description,
       type,
@@ -46,6 +52,8 @@ const IssueInfo: React.FC<IssueInfoProps> = (props): React.ReactElement => {
     },
   } = props
 
+  const { snackbars: snackbarStore } = useMobXStores()
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -56,167 +64,208 @@ const IssueInfo: React.FC<IssueInfoProps> = (props): React.ReactElement => {
     setAnchorEl(null)
   }
 
+  const [openLogTimeModal, setOpenLogTimeModal] = useState(false)
+
+  const handleOpenLogTimeModal = () => {
+    setOpenLogTimeModal(true)
+  }
+
+  const handleCloseLogTimeModal = () => {
+    setOpenLogTimeModal(false)
+  }
+
+  const onSuccessfulLogTime = () => {
+    handleCloseLogTimeModal()
+    snackbarStore.push(
+      snackbar('The time has been logged successfully', 'success')
+    )
+  }
+
   return (
-    <Card sx={{ minWidth: '400px', borderRadius: 2 }} elevation={6}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: 'success.main' }} aria-label="creator">
-            {fullNameToInitials(fullName)}
-          </Avatar>
-        }
-        title={fullName}
-        subheader={username}
-        titleTypographyProps={{
-          variant: 'subtitle1',
-          component: 'div',
-          color: 'text.secondary',
-        }}
-        action={
-          <Box sx={{ flexGrow: 0 }}>
-            <IconButton aria-label="actions" onClick={handleMenu}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem
-                onClick={() => {
-                  handleClose()
+    <>
+      <Card sx={{ minWidth: '400px', borderRadius: 2 }} elevation={6}>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: 'success.main' }} aria-label="creator">
+              {fullNameToInitials(fullName)}
+            </Avatar>
+          }
+          title={fullName}
+          subheader={username}
+          titleTypographyProps={{
+            variant: 'subtitle1',
+            component: 'div',
+            color: 'text.secondary',
+          }}
+          action={
+            <Box sx={{ flexGrow: 0 }}>
+              <IconButton aria-label="actions" onClick={handleMenu}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
                 }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
               >
-                <ListItemIcon>
-                  <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Edit an issue</ListItemText>
-              </MenuItem>
-            </Menu>
-          </Box>
-        }
-      />
-      <Divider light />
-      <CardContent>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          sx={{ flexWrap: 'wrap' }}
-        >
+                <MenuItem
+                  onClick={() => {
+                    handleClose()
+                  }}
+                >
+                  <ListItemIcon>
+                    <EditIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Edit an issue</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose()
+                    handleOpenLogTimeModal()
+                  }}
+                >
+                  <ListItemIcon>
+                    <AccessTimeIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Log time</ListItemText>
+                </MenuItem>
+              </Menu>
+            </Box>
+          }
+        />
+        <Divider light />
+        <CardContent>
           <Stack
             direction="row"
-            spacing={1}
-            justifyContent="flex-start"
+            justifyContent="space-between"
             sx={{ flexWrap: 'wrap' }}
           >
-            <CircleIcon color={bulletColorMap.get(type)} />
-            <Typography variant="body1" component="div" color="text.secondary">
-              Issue
-              <Typography variant="h6" component="div" color="text.primary">
-                {title}
-              </Typography>
-            </Typography>
-            <Chip
-              label={status}
-              color={statusChipColorMap.get(status)}
-              variant="outlined"
-            />
-          </Stack>
-          <Typography variant="body1" component="div" color="text.secondary">
-            Project:{` `}
-            <Link
-              href={`/project/${projectCreatorUsername}/${slug}`}
-              variant="body1"
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="flex-start"
+              sx={{ flexWrap: 'wrap' }}
             >
-              {projectTitle}
-            </Link>
-          </Typography>
-        </Stack>
-        <Divider sx={{ m: 1 }} light />
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-          Time Estimate
-        </Typography>
-        <Stack direction="row" spacing={1} justifyContent="flex-start">
-          <AccessTimeIcon />
-          <Typography variant="body1" color="text.secondary">
-            {`${estimate} h.`}
-          </Typography>
-        </Stack>
-        {description && (
-          <>
-            <Divider sx={{ m: 1 }} light />
-            <Typography variant="body1" color="text.secondary">
-              {description}
-            </Typography>
-          </>
-        )}
-        {assignee && (
-          <>
-            <Divider sx={{ m: 1 }} light />
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              Assignee
-            </Typography>
-            <Stack direction="row" justifyContent="flex-start" spacing={2}>
-              <Avatar sx={{ bgcolor: 'success.main' }} aria-label="memners">
-                {fullNameToInitials(assignee.fullName)}
-              </Avatar>
+              <CircleIcon color={bulletColorMap.get(type)} />
               <Typography
-                component="div"
                 variant="body1"
+                component="div"
                 color="text.secondary"
               >
-                {assignee.fullName}
-                <Typography
-                  component="div"
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {assignee.username}
+                Issue
+                <Typography variant="h6" component="div" color="text.primary">
+                  {title}
                 </Typography>
               </Typography>
+              <Chip
+                label={status}
+                color={statusChipColorMap.get(status)}
+                variant="outlined"
+              />
             </Stack>
-          </>
-        )}
-        {parent && (
-          <>
-            <Divider sx={{ m: 1 }} light />
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              Parent issue
+            <Typography variant="body1" component="div" color="text.secondary">
+              Project:{` `}
+              <Link
+                href={`/project/${projectCreatorUsername}/${slug}`}
+                variant="body1"
+              >
+                {projectTitle}
+              </Link>
             </Typography>
-            <Stack direction="row" spacing={2} justifyContent="flex-start">
-              <CircleIcon color={bulletColorMap.get(parent?.type)} />
-              <Typography variant="body1" color="text.secondary">
-                {parent?.title}
-              </Typography>
-            </Stack>
-          </>
-        )}
-        {epic && (
-          <>
-            <Divider sx={{ m: 1 }} light />
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              Epic
+          </Stack>
+          <Divider sx={{ m: 1 }} light />
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+            Time Estimate
+          </Typography>
+          <Stack direction="row" spacing={1} justifyContent="flex-start">
+            <AccessTimeIcon />
+            <Typography variant="body1" color="text.secondary">
+              {`${estimate} h.`}
             </Typography>
-            <Stack direction="row" spacing={2} justifyContent="flex-start">
-              <CircleIcon color={bulletColorMap.get('epic')} />
+          </Stack>
+          {description && (
+            <>
+              <Divider sx={{ m: 1 }} light />
               <Typography variant="body1" color="text.secondary">
-                {epic?.title}
+                {description}
               </Typography>
-            </Stack>
-          </>
-        )}
-      </CardContent>
-    </Card>
+            </>
+          )}
+          {assignee && (
+            <>
+              <Divider sx={{ m: 1 }} light />
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                Assignee
+              </Typography>
+              <Stack direction="row" justifyContent="flex-start" spacing={2}>
+                <Avatar sx={{ bgcolor: 'success.main' }} aria-label="memners">
+                  {fullNameToInitials(assignee.fullName)}
+                </Avatar>
+                <Typography
+                  component="div"
+                  variant="body1"
+                  color="text.secondary"
+                >
+                  {assignee.fullName}
+                  <Typography
+                    component="div"
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    {assignee.username}
+                  </Typography>
+                </Typography>
+              </Stack>
+            </>
+          )}
+          {parent && (
+            <>
+              <Divider sx={{ m: 1 }} light />
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                Parent issue
+              </Typography>
+              <Stack direction="row" spacing={2} justifyContent="flex-start">
+                <CircleIcon color={bulletColorMap.get(parent?.type)} />
+                <Typography variant="body1" color="text.secondary">
+                  {parent?.title}
+                </Typography>
+              </Stack>
+            </>
+          )}
+          {epic && (
+            <>
+              <Divider sx={{ m: 1 }} light />
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                Epic
+              </Typography>
+              <Stack direction="row" spacing={2} justifyContent="flex-start">
+                <CircleIcon color={bulletColorMap.get('epic')} />
+                <Typography variant="body1" color="text.secondary">
+                  {epic?.title}
+                </Typography>
+              </Stack>
+            </>
+          )}
+        </CardContent>
+      </Card>
+      <Modal
+        title="Log time"
+        open={openLogTimeModal}
+        onClose={handleCloseLogTimeModal}
+      >
+        <LoggedTimeForm onSuccess={onSuccessfulLogTime} issueId={id} />
+      </Modal>
+    </>
   )
 }
 
-export default IssueInfo
+export default observer(IssueInfo)

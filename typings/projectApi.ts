@@ -155,3 +155,17 @@ export type CreateProjectIssueRequestData = {
 export type CreateProjectIssueResponseData = IssueDetailData
 
 export type CreateProjectIssueErrorsData = GenericErrorsData
+
+export type CreateIssueLoggedTimeRequestData = {
+  time: number
+  comment: string
+}
+
+export type CreateIssueLoggedTimeResponseData = IDMixin & {
+  time: number
+  comment: string
+  user: ProjectUserData
+  issue: ProjectIssueData
+}
+
+export type CreateIssueLoggedTimeErrorsData = GenericErrorsData

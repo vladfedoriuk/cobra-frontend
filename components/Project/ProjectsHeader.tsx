@@ -1,6 +1,5 @@
 import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import React, { useState } from 'react'
 
@@ -52,9 +51,6 @@ const ProjectsHeader: React.FC = (): React.ReactElement => {
   return (
     <>
       <Stack direction="row">
-        <Typography component="div" variant="h4">
-          Projects
-        </Typography>
         <IconButton
           sx={{ color: 'success.main' }}
           aria-label="add a project"

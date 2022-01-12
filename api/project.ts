@@ -1,6 +1,8 @@
 import {
   AcceptProjecInvitationRequestData,
   AcceptProjecInvitationResponseData,
+  CreateIssueLoggedTimeRequestData,
+  CreateIssueLoggedTimeResponseData,
   CreateProjectEpicRequestData,
   CreateProjectEpicResponseData,
   CreateProjectInvitationRequestData,
@@ -252,6 +254,19 @@ export default class ProjectApi extends BaseApi {
       CreateProjectIssueResponseData,
       CreateProjectIssueRequestData
     >(`projects/${id}/issues/`, createProjectIssueData, {
+      headers: { ...this.authenticationHeaders(ctx) },
+    })
+  }
+
+  createIssueLoggedTime(
+    id: number,
+    createIssueLoggedTimeData: CreateIssueLoggedTimeRequestData,
+    ctx: NextContext['ctx'] = null
+  ): Promise<AxiosResponse<CreateIssueLoggedTimeResponseData>> {
+    return this.post<
+      CreateIssueLoggedTimeResponseData,
+      CreateIssueLoggedTimeRequestData
+    >(`issue/${id}/logged_time/`, createIssueLoggedTimeData, {
       headers: { ...this.authenticationHeaders(ctx) },
     })
   }

@@ -9,6 +9,7 @@ import {
   GetEpicDetailResponseData,
   IssueDetailData,
   ProjectIssueData,
+  CreateIssueLoggedTimeResponseData,
 } from '@typings/projectApi'
 import {
   ProjectUser as ProjectUserType,
@@ -21,6 +22,7 @@ import {
   ProjectIssue,
   Epic,
   Issue,
+  IssueLoggedTime,
 } from '@typings/projectStore'
 
 export const transformProjectEpics = (
@@ -92,6 +94,16 @@ export const transformIssue = (issueData: IssueDetailData): Issue => {
     },
     description,
     estimate,
+  }
+}
+
+export const transformIssueLoggedTime = (
+  loggedTimeData: CreateIssueLoggedTimeResponseData
+): IssueLoggedTime => {
+  return {
+    ...loggedTimeData,
+    user: transformProjectUser(loggedTimeData.user),
+    issue: transformProjectIssue(loggedTimeData.issue),
   }
 }
 

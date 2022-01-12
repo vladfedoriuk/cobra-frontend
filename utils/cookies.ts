@@ -47,6 +47,7 @@ export const setCookie = ({
     const cookies = new Cookies(req, res)
     cookies.set(cookieName, cookieValue, {
       httpOnly: true, // true by default
+      sameSite: 'lax',
     })
     return
   }

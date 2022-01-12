@@ -74,3 +74,10 @@ export type Epic = IDMixin & {
   project: Pick<Project, 'id' | 'title' | 'slug' | 'creator'>
   creator: ProjectUser
 }
+
+export type IssueLoggedTime = IDMixin & {
+  time: number
+  comment: string
+  user: ProjectUser
+  issue: ProjectIssue
+}
